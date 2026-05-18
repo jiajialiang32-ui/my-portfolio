@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pixel Valley Portfolio</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="bg-[#1a100a] text-[#421f06] overflow-hidden m-0 p-0 select-none flex flex-col h-screen">
+
+    <header class="w-full bg-[#f3d9a4] border-b-8 border-[#5c2e0b] shadow-[0_4px_0_rgba(0,0,0,0.15)] p-4 flex flex-col md:flex-row items-center justify-between gap-4 z-30 shrink-0">
+        <div class="px-6 py-2 bg-[#b97235] text-[#fffdf9] border-4 border-[#421f06] shadow-[4px_4px_0px_0px_rgba(0,0,0,0.2)]">
+            <h1 class="text-4xl font-bold tracking-wider">PIXEL VALLEY PORTFOLIO</h1>
+        </div>
+
+        <nav class="flex flex-wrap gap-3">
+            <button onclick="openModal('about')" class="stardew-tab-btn px-4 py-2 text-2xl font-bold">ABOUT ME</button>
+            <button onclick="openModal('skills')" class="stardew-tab-btn px-4 py-2 text-2xl font-bold">SKILLS</button>
+            <button onclick="openModal('projects')" class="stardew-tab-btn px-4 py-2 text-2xl font-bold">PROJECTS</button>
+            <button onclick="openModal('contact')" class="stardew-tab-btn px-4 py-2 text-2xl font-bold">CONTACT</button>
+        </nav>
+    </header>
+
+    <main id="interactive-mode" class="flex-1 w-full relative bg-[#6fa1ff]">
+        <canvas id="gameCanvas" class="w-full h-full block"></canvas>
+        
+        <div id="interaction-prompt" class="hidden fixed bottom-1/3 left-1/2 transform -translate-x-1/2 stardew-container px-6 py-3 text-2xl font-bold text-center z-40 animate-bounce">
+            Press [SPACE] to Open
+        </div>
+
+        <audio id="bg-music" loop preload="auto">
+            <source src="assets/Free pack/Towball - Towball's Crossing/23 2am _ Towball's Crossing.mp3" type="audio/mpeg">
+        </audio>
+    </main>
+
+    <div id="modal-overlay" class="hidden fixed inset-0 bg-black/60 z-50 items-center justify-center p-4 transition-all duration-200">
+        <div id="modal-content" class="stardew-container w-full max-w-xl p-8 relative transform scale-90 opacity-0 transition-all duration-300">
+            <button id="modal-close" class="absolute -top-3 -right-3 w-10 h-10 bg-[#9c2a2a] border-4 border-[#421f06] font-bold text-white flex items-center justify-center cursor-pointer shadow-md text-xl hover:bg-[#bd3a3a]">X</button>
+            <div id="modal-body" class="text-[#421f06] text-2xl leading-relaxed"></div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

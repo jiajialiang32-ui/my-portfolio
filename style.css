@@ -1,0 +1,53 @@
+/* 引入复古像素字体 */
+body, button, div, h1, h2, h3 {
+    font-family: 'VT323', monospace;
+}
+
+/* 核心灵魂：严禁浏览器对像素图片资源进行任何平滑模糊处理，锁定硬边缘 */
+canvas, img {
+    image-rendering: -moz-crisp-edges;
+    image-rendering: -webkit-crisp-edges;
+    image-rendering: pixelated;
+    image-rendering: crisp-edges;
+}
+
+/* 星露谷风格标准双层木质UI容器 */
+.stardew-container {
+    background-color: #f3d9a4; /* 温暖的羊皮纸黄 */
+    border: 6px solid #5c2e0b; /* 深木色外框 */
+    /* 利用双重内部阴影模拟内嵌的木纹像素高光与暗影 */
+    box-shadow: 
+        inset -4px -4px 0px #b5834b, 
+        inset 4px 4px 0px #fff4cc,
+        8px 8px 0px rgba(0, 0, 0, 0.3);
+    border-radius: 0px; /* 像素风不需要圆角，纯硬朗直角 */
+}
+
+/* 顶部复古 Tab 菜单按钮样式 */
+.stardew-tab-btn {
+    background-color: #e4ca93;
+    color: #421f06;
+    border: 4px solid #5c2e0b;
+    box-shadow: inset -2px -2px 0px #b5834b, inset 2px 2px 0px #fffdf9;
+    position: relative;
+    top: 0;
+    transition: all 0.1s;
+    cursor: pointer;
+}
+
+.stardew-tab-btn:hover {
+    background-color: #f3d9a4;
+    top: -2px;
+    box-shadow: inset -2px -2px 0px #b5834b, inset 2px 2px 0px #fffdf9, 0 4px 0 #5c2e0b;
+}
+
+.stardew-tab-btn:active {
+    top: 2px;
+    box-shadow: inset 2px 2px 0px #b5834b;
+}
+
+/* 弹窗激活时缩放淡入 */
+#modal-overlay.active #modal-content {
+    transform: scale(1);
+    opacity: 1;
+}
