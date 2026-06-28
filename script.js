@@ -86,6 +86,9 @@ imgFruit.src = 'assets/Free pack/image copy 4.png';
 const imgCoin = new Image();
 imgCoin.src = 'assets/Free pack/coin4_16x16.png';
 
+const imgOrangeCat = new Image();
+imgOrangeCat.src = 'assets/Free pack/Free pack 2/cat 1.6.png';
+
 const coinSound = new Audio('assets/Free pack/Confirm 1.wav');
 coinSound.preload = 'auto';
 const meowSound = new Audio('assets/Free pack/Cat_Meow.wav');
@@ -97,13 +100,16 @@ confirmSound.preload = 'auto';
 const wishOpenSound = new Audio('assets/Free pack/lolurio Free Cozy Game UI SFX Pack/WAV/UI SFX_InGameMenu_Open.wav');
 wishOpenSound.preload = 'auto';
 
+const orangeCatSound = new Audio('assets/Free pack/stu9-cute-cat-352656.mp3');
+orangeCatSound.preload = 'auto';
+
 // ==========================================
 // 2. 全局状态与玩家配置
 // ==========================================
 const player = {
     width: 128,
     height: 128,
-    speed: 7,
+    speed: 10,
     isMoving: false,
     facingRight: true,
     squashX: 1,
@@ -125,7 +131,7 @@ const FULL_CIRCLE = Math.PI * 2;
 // 3. 四大交互点地标建筑配置
 // ==========================================
 const interactiveObjects = [
-    { id: 'wish', name: '许愿池', angle: -0.35, w: 530, h: 280, img: imgWish, emoji: '✨', color: '#ffb347' ,y_offset: 35},
+    { id: 'wish', name: '许愿池', angle: -0.35, w: 530, h: 280, img: imgWish, emoji: '✨', color: '#ffb347' ,y_offset: 35, hasWished: false},
     { id: 'about', name: '农场邮箱', angle: 0, w: 350, h: 450, img: imgAbout, emoji: '📬', color: '#b97235' },
     { id: null, name: '圣诞树', angle: 0.35, w: 200, h: 250, img: imgLightTree, emoji: '🎄', color: '#3a5f25' },
     { id: null, name: '驯鹿', angle: 0.5, w: 100, h: 170, img: imgLightReindeer, emoji: '🦌', color: '#b97235' },
@@ -139,6 +145,7 @@ const interactiveObjects = [
     { id: null, name: 'Coin 2L', angle: 2.2, w: 50, h: 50, img: imgCoin, type: 'coin' },
     { id: null, name: 'Coin 2', angle: 2.4, w: 50, h: 50, img: imgCoin, type: 'coin' },
     { id: null, name: 'Coin 2R', angle: 2.5 + 0.08, w: 50, h: 50, img: imgCoin, type: 'coin' },
+    { id: 'orange-cat', name: '小橘猫', angle: Math.PI - 0.45, w: 128, h: 128, img: imgOrangeCat, type: 'npc',y_offset: 9, soundPlayed: false },
     { id: null, name: 'Project左侧树', angle: Math.PI - 0.25, w: 250, h: 300, img: imgProjTreeLeft, emoji: '🌲', color: '#3a5f25', y_offset: 28 },
     { id: 'projects', name: '储物木箱', angle: Math.PI, w: 350, h: 450, img: imgProj, emoji: '📦', color: '#d3a034' },
     { id: null, name: 'Project右侧树', angle: Math.PI + 0.35, w: 235, h: 90, img: imgProjTreeRight, emoji: '🌲', color: '#3a5f25', y_offset: 5 },
@@ -201,27 +208,24 @@ function openNearbyObject() {
     if (nearObject.id === 'wish') {
         const allCoinsCollected = interactiveObjects.filter(obj => obj.type === 'coin').every(obj => obj.collected);
         if (allCoinsCollected) {
-            playEffectSound(meowSound);
             playEffectSound(wishOpenSound);
-
-            if (!nearObject.hasWished) {
-                const wishMessages = [
-                    "The wishing well has sensed your coin. It wants to whisper to you: You've been doing so well lately. Make sure to treat yourself to a delicious drink today.",
-                    "The ripples fading across the water will wash away all your anxiety. Try going to bed half an hour early tonight, and sweet dreams!",
-                    "No matter how today went, the wishing well will always be here waiting for you. Tomorrow is a brand new day!",
-                    "Coin tossed successfully! I have a feeling that every traffic light you hit today will turn green just for you.",
-                    "The coin has found its coziest spot at the bottom, sharing its luck with you: there's a good chance you won't have to wait in line for coffee today!",
-                    "Your luck index is off the charts today! If there's something you've been hesitating about, why not just go for it today?"
-                ];
-                const randomMsg = wishMessages[Math.floor(Math.random() * wishMessages.length)];
-                modalData['wish'] = `<h2 class="text-4xl font-bold text-[#ffb347] mb-3">WISH ✨</h2><p class="text-xl">${randomMsg}</p>`;
-                nearObject.hasWished = true;
-            }
+            
+            const wishMessages = [
+                "The wishing well has sensed your coin. It wants to whisper to you: You've been doing so well lately. Make sure to treat yourself to a delicious drink today.",
+                "The ripples fading across the water will wash away all your anxiety. Try going to bed half an hour early tonight, and sweet dreams!",
+                "No matter how today went, the wishing well will always be here waiting for you. Tomorrow is a brand new day!",
+                "Coin tossed successfully! I have a feeling that every traffic light you hit today will turn green just for you.",
+                "The coin has found its coziest spot at thebottom, sharing its luck with you: there's a good chance you won't have to wait in line for coffee today!",
+                "Your luck index is off the charts today! If there's something you've been hesitating about, why not just go for it today?"
+            ];
+            const randomMsg = wishMessages[Math.floor(Math.random() * wishMessages.length)];
+            modalData['wish'] = `<h2 class="text-4xl font-bold text-[#ffb347] mb-3">WISH ✨</h2><p class="text-xl">${randomMsg}</p>`;
+            nearObject.hasWished = true; // Mark that a wish has been made at least once
 
             openModal(nearObject.id);
             return true;
         }
-    } else {
+    } else if (nearObject.id) {
         playEffectSound(bubbleSound);
         openModal(nearObject.id);
         return true;
@@ -366,6 +370,10 @@ function update() {
         player.frameX = 0;
     }
 
+    // Normalize worldAngle to prevent it from growing indefinitely and causing float precision issues.
+    const twoPi = Math.PI * 2;
+    worldAngle = ((worldAngle % twoPi) + twoPi) % twoPi;
+
     // 取消角度限制，允许自由环绕整个星球
     // const maxAngle = 480 / GLOBE_RADIUS;
     // worldAngle = Math.max(-maxAngle, Math.min(maxAngle, worldAngle));
@@ -411,14 +419,24 @@ function update() {
             if (obj.type === 'coin') {
                 obj.collected = true; // 玩家碰到金币，标记为收集
                 playEffectSound(coinSound.cloneNode(true));
+            } else if (obj.id === 'orange-cat' && !obj.soundPlayed) {
+                playEffectSound(orangeCatSound.cloneNode(true));
+                obj.soundPlayed = true;
             } else if (obj.id) {
                 nearObject = obj; // 只对有 id 的物体显示交互提示
             }
         }
     });
+    // Reset sound flag for the orange cat only when the player is no longer near it.
+    const orangeCat = interactiveObjects.find(obj => obj.id === 'orange-cat');
+    if (orangeCat && orangeCat.soundPlayed) {
+        const angleDiff = (orangeCat.angle + worldAngle) % (Math.PI * 2);
+        const dist = Math.abs(angleDiff > Math.PI ? angleDiff - Math.PI * 2 : angleDiff) * GLOBE_RADIUS;
+        if (dist >= 60) orangeCat.soundPlayed = false;
+    }
 
     const promptEl = document.getElementById('interaction-prompt');
-    if (hasUserInteracted && nearObject) {
+    if (hasUserInteracted && nearObject && nearObject.id !== 'orange-cat') {
         if (nearObject.id === 'wish') {
             const allCoinsCollected = interactiveObjects.filter(obj => obj.type === 'coin').every(obj => obj.collected);
             promptEl.textContent = allCoinsCollected ? (isMobileViewport() ? 'Tap to Make a Wish' : 'Make a Wish and Press [SPACE]') : 'collect all the coins';
@@ -536,7 +554,18 @@ function draw() {
                     -obj.w/2, objY, obj.w, obj.h
                 );
             } else {
-                ctx.drawImage(obj.img, -drawW/2, objY, drawW, drawH);
+                if (obj.type === 'npc' && (obj.name === '小灰猫' || obj.name === '小橘猫')) {
+                    const npcFrameW = 32;
+                    const npcFrameH = 32;
+                    // 小灰猫用第37行 (索引36)，小橘猫用第38行 (索引37)
+                    const npcRow = (obj.name === '小灰猫') ? 36 : 37;
+                    const npcFrameCount = 4;
+                    const frameIndex = Math.floor(Date.now() / 200) % npcFrameCount; // 200ms一帧
+                    ctx.drawImage(obj.img, frameIndex * npcFrameW, npcRow * npcFrameH, npcFrameW, npcFrameH, -drawW/2, objY, drawW, drawH);
+                    ctx.restore();
+                    return; // 绘制完NPC后跳过下面的通用绘制
+                }
+                ctx.drawImage(obj.img, -drawW / 2, objY, drawW, drawH);
             }
         }
         ctx.restore();
@@ -620,6 +649,7 @@ function gameLoop() {
     draw();
     requestAnimationFrame(gameLoop);
 }
+
 gameLoop();
 
 // ==========================================
@@ -665,16 +695,15 @@ const modalData = {
                                                                                     <p class="text-xl">📊 Business Intelligence & Automation: Power BI, Microsoft Excel (VBA)</p>
                                                                                     <p class="text-xl">🧠 Core Competencies: Critical Thinking, Data-Driven Problem Solving, Quantitative Analysis</p>`,
     projects: `<h2 class="text-4xl font-bold text-[#b97235] mb-3">PROJECTS 📦</h2>`, // This will be replaced by renderProjectsModal
-    letter: `
-        <div class="font-handwritten">
-            <h2 class="text-4xl font-bold text-[#9e331f] mb-3">✉️ A Handwritten Letter from Makayla</h2>
-            <p class="text-xl mb-4">Dear Adventurer,</p>
-            <p class="text-xl mb-4">Thank you so much for taking the time to explore my little pixel island alongside my cat companion!</p>
-            <p class="text-xl mb-4">In a world where most portfolios feel as sterile and rigid as financial spreadsheets, I wanted to build something entirely different. I chose this retro pixel-art style because of a core philosophy I hold close: data and technical engineering only realize their true potential when they are wrapped in an empathetic, user-first experience.</p>
-            <p class="text-xl mb-4">Whether you stumbled upon my space looking for a versatile teammate to tackle complex projects, or you just wanted to take a relaxing stroll with a pixel cat, I am incredibly grateful for your time and curiosity.</p>
-            <p class="text-xl mb-4">🌟 Wishing you the absolute best of luck today—may you trigger a perfect "Daily Luck" modifier in everything you do in the real world!</p>
-            <p class="text-xl text-right">— Makayla Liang</p>
-        </div>`,
+    letter: ` <div class="font-handwritten">
+    <h2 class="text-4xl font-bold text-[#9e331f] mb-3">✉️ A Handwritten Letter from Makayla</h2>
+    <p class="text-xl mb-4">Dear Adventurer,</p>
+    <p class="text-xl mb-4">Thank you so much for taking the time to explore my little pixel island alongside my cat companion!</p>
+    <p class="text-xl mb-4">In a world where most portfolios feel as sterile and rigid as financial spreadsheets, I wanted to build something entirely different. I chose this retro pixel-art style because of a core philosophy I hold close: data and technical engineering only realize their true potential when they are wrapped in an empathetic, user-first experience.</p>
+    <p class="text-xl mb-4">Whether you stumbled upon my space looking for a versatile teammate to tackle complex projects, or you just wanted to take a relaxing stroll with a pixel cat, I am incredibly grateful for your time and curiosity.</p>
+    <p class="text-xl mb-4">🌟 Wishing you the absolute best of luck today—may you trigger a perfect "Daily Luck" modifier in everything you do in the real world!</p>
+    <p class="text-xl text-right">— Makayla Liang</p>
+</div>`,
     contact: `<h2 class="text-4xl font-bold text-[#4d7298] mb-3">CONTACT 🎣</h2><p class="text-xl">📱Phone Number: 437-829-7174</p><p class="text-xl">📮Email: <a href="mailto:jiajialiang32@gmail.com" class="underline">jiajialiang32@gmail.com</a></p><p class="text-xl">💼LinkedIn: <a href="https://www.linkedin.com/in/makayla-liang-26a2393a7/" target="_blank" rel="noopener noreferrer" class="underline">Makayla Liang</a></p>`,
     wish: `<h2 class="text-4xl font-bold text-[#ffb347] mb-3">WISH ✨</h2><p class="text-xl">你的愿望已经收到啦！(Your wish has been received!)</p>`
 };
@@ -742,7 +771,7 @@ function renderProjectsModal() {
 function openModal(id) {
     if (id === 'projects') {
         renderProjectsModal();
-    } else {
+    } else if (modalData[id]) {
         body.innerHTML = modalData[id];
     }
     overlay.style.display = 'flex';
@@ -760,12 +789,15 @@ function closeModal() {
 
 overlay.addEventListener('transitionend', (e) => {
     if (e.propertyName === 'opacity' && !overlay.classList.contains('active')) {
-        // After the wish modal closes for the first time, directly show the letter.
         if (overlay.dataset.currentModal === 'wish' && !letterShown) {
-            letterShown = true; // Ensure this only happens once.
-            setTimeout(() => { // A small delay for a smoother transition
-                openModal('letter');
-                const letterOpenSound = new Audio('assets/Free pack/lolurio Free Cozy Game UI SFX Pack/WAV/UI SFX_InGameMenu_Open.wav');
+            letterShown = true;
+            setTimeout(() => {
+                overlay.style.display = 'flex';
+                setTimeout(() => overlay.classList.add('active'), 10);
+                overlay.dataset.currentModal = 'letter';
+                // 替换为直接设置内容，因为 typeWriter 函数未定义
+                body.innerHTML = modalData.letter;
+                const letterOpenSound = new Audio('assets/Free pack/lolurio Free Cozy Game UI SFX Pack/WAV/UI SFX_InGameMenu_Load.wav');
                 playEffectSound(letterOpenSound);
             }, 300);
         } else {
@@ -773,9 +805,11 @@ overlay.addEventListener('transitionend', (e) => {
         }
     }
 });
+
 // 监听空格触发近身弹窗
 window.addEventListener('keydown', (e) => {
-    if (e.key === ' ' && nearObject) {
+    // 只有在弹窗未打开时才响应
+    if (e.key === ' ' && nearObject && !overlay.classList.contains('active')) {
         // 阻止网页按空格产生默认向下滚动的行为
         e.preventDefault(); 
         openNearbyObject();
@@ -810,7 +844,7 @@ const soundBtn = document.getElementById('sound-btn');
 const soundMenu = document.getElementById('sound-menu');
 const musicToggleBtn = document.getElementById('music-toggle');
 const effectToggleBtn = document.getElementById('effect-toggle');
-const effectSounds = [coinSound, meowSound, bubbleSound, confirmSound, wishOpenSound];
+const effectSounds = [coinSound, meowSound, bubbleSound, confirmSound, wishOpenSound, orangeCatSound];
 
 function updateSoundUI() {
     if (musicToggleBtn) {
