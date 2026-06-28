@@ -227,6 +227,13 @@ function openNearbyObject() {
 }
 
 window.addEventListener('pointerdown', (e) => {
+    const overlay = document.getElementById('modal-overlay');
+    if (overlay.classList.contains('active')) return;
+
+    // Ignore taps on the header to prevent conflict with header buttons
+    const header = document.querySelector('header');
+    if (e.target instanceof Element && header.contains(e.target)) return;
+    
     if (!isMobileViewport() || !nearObject || e.pointerType !== 'touch') return;
     if (e.target instanceof Element && e.target.closest('#joystick-base')) return;
 
@@ -620,14 +627,16 @@ const projectData = [
         title: 'North American Social Media Marketing ROI Optimization & Predictive Simulation',
         description: 'This project analyzes a synthetic marketing dataset for a Canadian FMCG brand and evaluates how budget shifts could improve ROI for the 18–25 female audience. It combines Python-based simulation, SQL-style aggregation, and a Power BI dashboard into a compact portfolio project.',
         skills: ['Python: pandas, numpy, matplotlib, pandasql', 'Notebook: Jupyter / ipykernel', 'Visualization: Power BI'],
-        highlights: 'The project explores how smarter budget allocation and audience targeting can improve campaign efficiency and expected returns.'
+        highlights: 'The project explores how smarter budget allocation and audience targeting can improve campaign efficiency and expected returns.',
+        githubUrl: 'https://github.com/jiajialiang32-ui/roi-project'
     },
     {
         id: 'subscription-testing',
         title: 'FinTech Subscription Optimization via A/B Testing',
         description: 'This project evaluates the behavioral and financial impact of an optimized pricing page interface for a FinTech platform. Using a reproducible data pipeline, the analysis simulates user behavior, validates assumptions, performs statistical testing, and translates results into a revenue projection.',
         skills: ['Python 3', 'NumPy', 'Pandas', 'Seaborn', 'Matplotlib', 'Statsmodels', 'Jupyter Notebook'],
-        highlights: 'The project combines statistical analysis with business impact modeling to assess pricing-page changes and forecast revenue outcomes.'
+        highlights: 'The project combines statistical analysis with business impact modeling to assess pricing-page changes and forecast revenue outcomes.',
+        githubUrl: 'https://github.com/jiajialiang32-ui/ABtesting'
     },
     {
         id: 'portfolio-site',
@@ -638,10 +647,11 @@ const projectData = [
     },
     {
         id: 'telecom-churn',
-        title: 'Telecom_Churn_Intelligence_Dashboard',
+        title: 'Telecom Churn Intelligence Dashboard',
         description: 'This repository contains a robust, interactive Business Intelligence Dashboard built with Power BI, leveraging the Kaggle Telco Customer Churn dataset (7,043 records). By bridging mathematical rigor with strategic business administration, this project transforms raw operational data into actionable retention assets. The analysis is structured to provide both Global KPI Oversight for executives and Granular Risk Mitigation for product and marketing teams, aiming to identify systemic revenue leakage and deploy data-driven interventions.',
         skills: ['Power BI', 'Data Analysis', 'Business Strategy'],
-        highlights: 'The dashboard focuses on customer retention insights, churn risk visibility, and executive-ready business recommendations.'
+        highlights: 'The dashboard focuses on customer retention insights, churn risk visibility, and executive-ready business recommendations.',
+        githubUrl: 'https://github.com/jiajialiang32-ui/Telecom_Churn_Intelligence_Dashboard'
     }
 ];
 
@@ -683,6 +693,15 @@ function renderProjectsModal() {
             button.classList.toggle('active', button.dataset.project === projectId);
         });
 
+        // Create a variable to hold the GitHub link HTML
+        let githubLinkHtml = '';
+        if (project.githubUrl) {
+            githubLinkHtml = `<a href="${project.githubUrl}" target="_blank" rel="noopener noreferrer" class="project-link-btn">View GitHub Project</a>`;
+        } else if (project.id === 'telecom-churn') {
+            // Redundant fallback to ensure the link for the telecom project is always shown
+            githubLinkHtml = `<a href="https://github.com/jiajialiang32-ui/Telecom_Churn_Intelligence_Dashboard" target="_blank" rel="noopener noreferrer" class="project-link-btn">View GitHub Project</a>`;
+        }
+
         detailEl.innerHTML = `
             <h3 class="text-3xl font-bold text-[#9e331f] mb-2">${project.title}</h3>
             <p class="text-xl mb-3">${project.description}</p>
@@ -691,9 +710,7 @@ function renderProjectsModal() {
                 ${project.skills.map(skill => `<span class="project-skill-tag">${skill}</span>`).join('')}
             </div>
             <p class="text-lg opacity-90">${project.highlights}</p>
-            ${project.id === 'subscription-testing' ? '<a href="https://github.com/jiajialiang32-ui/ABtesting" target="_blank" rel="noopener noreferrer" class="project-link-btn">View GitHub Project</a>' : ''}
-            ${project.id === 'roi-analysis' ? '<a href="https://github.com/jiajialiang32-ui/roi-project" target="_blank" rel="noopener noreferrer" class="project-link-btn">View GitHub Project</a>' : ''}
-            ${project.id === 'telecom-churn' ? '<a href="https://github.com/jiajialiang32-ui/Telecom_Churn_Intelligence_Dashboard" target="_blank" rel="noopener noreferrer" class="project-link-btn">View GitHub Project</a>' : ''}
+            ${githubLinkHtml}
         `;
     }
 
