@@ -1,3 +1,9 @@
+/* 引入手写字体 */
+@font-face {
+    font-family: 'Myfont';
+    src: url('assets/Free pack/Myfont-Regular 2.ttf') format('truetype');
+}
+
 /* 引入复古像素字体 */
 body, button, div, h1, h2, h3 {
     font-family: 'VT323', monospace;
@@ -9,6 +15,10 @@ canvas, img {
     image-rendering: -webkit-crisp-edges;
     image-rendering: pixelated;
     image-rendering: crisp-edges;
+}
+
+.font-handwritten {
+    font-family: 'Myfont', 'VT323', monospace;
 }
 
 .joystick-base {
@@ -160,6 +170,7 @@ canvas, img {
     max-height: calc(90vh - 3rem);
     overflow-y: auto; /* Changed from hidden to auto */
 }
+
 
 #modal-body h2 {
     margin-bottom: 0.75rem;

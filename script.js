@@ -117,6 +117,10 @@ let worldAngle = 0;
 const GLOBE_RADIUS = 840;
 const GLOBE_CENTER_OFFSET = 600;
 
+let totalAngleTraveled = 0;
+let letterShown = false; // Renamed from fullCircleCompleted for clarity
+const FULL_CIRCLE = Math.PI * 2;
+
 // ==========================================
 // 3. 四大交互点地标建筑配置
 // ==========================================
@@ -143,7 +147,7 @@ const interactiveObjects = [
     { id: null, name: 'Coin 3R', angle: 4.2, w: 50, h: 50, img: imgCoin, type: 'coin' },
     { id: null, name: 'Contact左侧树', angle: (3 * Math.PI) / 2 - 0.2, w: 80, h: 80, img: imgContactTreeLeft, emoji: '🌲', color: '#3a5f25' },
     { id: 'contact', name: '日常公告栏', angle: (3 * Math.PI) / 2, w: 350, h: 450, img: imgContact, emoji: '🎣', color: '#4d7298' },
-    { id: 'fruit', name: '神秘落果', angle: (3 * Math.PI) / 2 + 0.25, w: 132, h: 57, img: imgFruit, emoji: '🍓' },
+    { id: null, name: '神秘落果', angle: (3 * Math.PI) / 2 + 0.25, w: 132, h: 57, img: imgFruit, emoji: '🍓' },
     { id: null, name: 'Coin 4L', angle: 5.2, w: 50, h: 50, img: imgCoin, type: 'coin' },
     { id: null, name: 'Coin 4', angle: 5.4, w: 50, h: 50, img: imgCoin, type: 'coin' },
     { id: null, name: 'Coin 4R', angle: 5.6, w: 50, h: 50, img: imgCoin, type: 'coin' },
@@ -660,7 +664,17 @@ const modalData = {
     skills: `<h2 class="text-4xl font-bold text-[#3a5f25] mb-3">SKILLS TREE 🌲</h2><p class="text-xl">💻 Data Analytics & Programming: Python (Pandas, NumPy, Matplotlib), SQL</p>
                                                                                     <p class="text-xl">📊 Business Intelligence & Automation: Power BI, Microsoft Excel (VBA)</p>
                                                                                     <p class="text-xl">🧠 Core Competencies: Critical Thinking, Data-Driven Problem Solving, Quantitative Analysis</p>`,
-    projects: `<h2 class="text-4xl font-bold text-[#b97235] mb-3">PROJECTS 📦</h2>`,
+    projects: `<h2 class="text-4xl font-bold text-[#b97235] mb-3">PROJECTS 📦</h2>`, // This will be replaced by renderProjectsModal
+    letter: `
+        <div class="font-handwritten">
+            <h2 class="text-4xl font-bold text-[#9e331f] mb-3">✉️ A Handwritten Letter from Makayla</h2>
+            <p class="text-xl mb-4">Dear Adventurer,</p>
+            <p class="text-xl mb-4">Thank you so much for taking the time to explore my little pixel island alongside my cat companion!</p>
+            <p class="text-xl mb-4">In a world where most portfolios feel as sterile and rigid as financial spreadsheets, I wanted to build something entirely different. I chose this retro pixel-art style because of a core philosophy I hold close: data and technical engineering only realize their true potential when they are wrapped in an empathetic, user-first experience.</p>
+            <p class="text-xl mb-4">Whether you stumbled upon my space looking for a versatile teammate to tackle complex projects, or you just wanted to take a relaxing stroll with a pixel cat, I am incredibly grateful for your time and curiosity.</p>
+            <p class="text-xl mb-4">🌟 Wishing you the absolute best of luck today—may you trigger a perfect "Daily Luck" modifier in everything you do in the real world!</p>
+            <p class="text-xl text-right">— Makayla Liang</p>
+        </div>`,
     contact: `<h2 class="text-4xl font-bold text-[#4d7298] mb-3">CONTACT 🎣</h2><p class="text-xl">📱Phone Number: 437-829-7174</p><p class="text-xl">📮Email: <a href="mailto:jiajialiang32@gmail.com" class="underline">jiajialiang32@gmail.com</a></p><p class="text-xl">💼LinkedIn: <a href="https://www.linkedin.com/in/makayla-liang-26a2393a7/" target="_blank" rel="noopener noreferrer" class="underline">Makayla Liang</a></p>`,
     wish: `<h2 class="text-4xl font-bold text-[#ffb347] mb-3">WISH ✨</h2><p class="text-xl">你的愿望已经收到啦！(Your wish has been received!)</p>`
 };
@@ -733,13 +747,32 @@ function openModal(id) {
     }
     overlay.style.display = 'flex';
     setTimeout(() => overlay.classList.add('active'), 10);
+
+    // 记录当前打开的弹窗ID
+    if (overlay) {
+        overlay.dataset.currentModal = id;
+    }
 }
 function closeModal() {
     playEffectSound(confirmSound);
     overlay.classList.remove('active');
-    setTimeout(() => overlay.style.display = 'none', 200);
 }
 
+overlay.addEventListener('transitionend', (e) => {
+    if (e.propertyName === 'opacity' && !overlay.classList.contains('active')) {
+        // After the wish modal closes for the first time, directly show the letter.
+        if (overlay.dataset.currentModal === 'wish' && !letterShown) {
+            letterShown = true; // Ensure this only happens once.
+            setTimeout(() => { // A small delay for a smoother transition
+                openModal('letter');
+                const letterOpenSound = new Audio('assets/Free pack/lolurio Free Cozy Game UI SFX Pack/WAV/UI SFX_InGameMenu_Open.wav');
+                playEffectSound(letterOpenSound);
+            }, 300);
+        } else {
+            overlay.style.display = 'none';
+        }
+    }
+});
 // 监听空格触发近身弹窗
 window.addEventListener('keydown', (e) => {
     if (e.key === ' ' && nearObject) {
