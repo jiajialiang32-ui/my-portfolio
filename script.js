@@ -87,10 +87,15 @@ const imgCoin = new Image();
 imgCoin.src = 'assets/Free pack/coin4_16x16.png';
 
 const coinSound = new Audio('assets/Free pack/Confirm 1.wav');
+coinSound.preload = 'auto';
 const meowSound = new Audio('assets/Free pack/Cat_Meow.wav');
+meowSound.preload = 'auto';
 const bubbleSound = new Audio('assets/Free pack/Bubble 1.wav');
+bubbleSound.preload = 'auto';
 const confirmSound = new Audio('assets/Free pack/lolurio Free Cozy Game UI SFX Pack/WAV/UI SFX_FEEDBACK_Woom.wav');
+confirmSound.preload = 'auto';
 const wishOpenSound = new Audio('assets/Free pack/lolurio Free Cozy Game UI SFX Pack/WAV/UI SFX_InGameMenu_Open.wav');
+wishOpenSound.preload = 'auto';
 
 // ==========================================
 // 2. 全局状态与玩家配置
@@ -148,15 +153,146 @@ const interactiveObjects = [
 // 4. 键盘输入监听逻辑
 // ==========================================
 const keys = { a: false, d: false, ArrowLeft: false, ArrowRight: false };
-window.addEventListener('keydown', (e) => {
-    if (e.key.toLowerCase() in keys || e.key in keys) {
-        keys[e.key] = true;
+const joystickBase = document.getElementById('joystick-base');
+const joystickKnob = document.getElementById('joystick-knob');
+let joystickActive = false;
+
+function setKeyState(key, isPressed) {
+    if (key in keys) {
+        keys[key] = isPressed;
         markUserInteracted();
     }
+}
+
+window.addEventListener('keydown', (e) => {
+    if (e.key.toLowerCase() === 'a' || e.key === 'ArrowLeft') {
+        setKeyState('a', true);
+        if (e.key === 'ArrowLeft') setKeyState('ArrowLeft', true);
+    }
+    if (e.key.toLowerCase() === 'd' || e.key === 'ArrowRight') {
+        setKeyState('d', true);
+        if (e.key === 'ArrowRight') setKeyState('ArrowRight', true);
+    }
 });
-window.addEventListener('keyup', (e) => { if (e.key.toLowerCase() in keys || e.key in keys) keys[e.key] = false; });
+window.addEventListener('keyup', (e) => {
+    if (e.key.toLowerCase() === 'a' || e.key === 'ArrowLeft') {
+        setKeyState('a', false);
+        if (e.key === 'ArrowLeft') setKeyState('ArrowLeft', false);
+    }
+    if (e.key.toLowerCase() === 'd' || e.key === 'ArrowRight') {
+        setKeyState('d', false);
+        if (e.key === 'ArrowRight') setKeyState('ArrowRight', false);
+    }
+});
 window.addEventListener('click', markUserInteracted, { once: false });
 window.addEventListener('touchstart', markUserInteracted, { once: false });
+
+function isMobileViewport() {
+    return window.innerWidth <= 768;
+}
+
+function openNearbyObject() {
+    if (!nearObject) return false;
+
+    if (nearObject.id === 'wish') {
+        const allCoinsCollected = interactiveObjects.filter(obj => obj.type === 'coin').every(obj => obj.collected);
+        if (allCoinsCollected) {
+            playEffectSound(meowSound);
+            playEffectSound(wishOpenSound);
+
+            if (!nearObject.hasWished) {
+                const wishMessages = [
+                    "The wishing well has sensed your coin. It wants to whisper to you: You've been doing so well lately. Make sure to treat yourself to a delicious drink today.",
+                    "The ripples fading across the water will wash away all your anxiety. Try going to bed half an hour early tonight, and sweet dreams!",
+                    "No matter how today went, the wishing well will always be here waiting for you. Tomorrow is a brand new day!",
+                    "Coin tossed successfully! I have a feeling that every traffic light you hit today will turn green just for you.",
+                    "The coin has found its coziest spot at the bottom, sharing its luck with you: there's a good chance you won't have to wait in line for coffee today!",
+                    "Your luck index is off the charts today! If there's something you've been hesitating about, why not just go for it today?"
+                ];
+                const randomMsg = wishMessages[Math.floor(Math.random() * wishMessages.length)];
+                modalData['wish'] = `<h2 class="text-4xl font-bold text-[#ffb347] mb-3">WISH ✨</h2><p class="text-xl">${randomMsg}</p>`;
+                nearObject.hasWished = true;
+            }
+
+            openModal(nearObject.id);
+            return true;
+        }
+    } else {
+        playEffectSound(bubbleSound);
+        openModal(nearObject.id);
+        return true;
+    }
+
+    return false;
+}
+
+window.addEventListener('pointerdown', (e) => {
+    if (!isMobileViewport() || !nearObject || e.pointerType !== 'touch') return;
+    if (e.target instanceof Element && e.target.closest('#joystick-base')) return;
+
+    e.preventDefault();
+    openNearbyObject();
+}, { passive: false });
+
+function resetJoystick() {
+    if (!joystickKnob) return;
+    joystickKnob.style.transform = 'translate(-50%, -50%)';
+    setKeyState('a', false);
+    setKeyState('d', false);
+    joystickActive = false;
+}
+
+function bindJoystick() {
+    if (!joystickBase || !joystickKnob) return;
+
+    let active = false;
+    let baseRect = null;
+    let pointerId = null;
+
+    const updateFromPoint = (clientX, clientY) => {
+        if (!baseRect) return;
+        const dx = clientX - (baseRect.left + baseRect.width / 2);
+        const dy = clientY - (baseRect.top + baseRect.height / 2);
+        const maxDist = 24;
+        const clampedX = Math.max(-maxDist, Math.min(maxDist, dx));
+        const clampedY = Math.max(-maxDist, Math.min(maxDist, dy));
+        joystickKnob.style.transform = `translate(calc(-50% + ${clampedX}px), calc(-50% + ${clampedY}px))`;
+        const left = clampedX < -8;
+        const right = clampedX > 8;
+        setKeyState('a', left);
+        setKeyState('d', right);
+    };
+
+    const start = (e) => {
+        e.preventDefault();
+        if (active) return;
+        active = true;
+        joystickActive = true;
+        pointerId = e.pointerId;
+        baseRect = joystickBase.getBoundingClientRect();
+        joystickBase.setPointerCapture?.(e.pointerId);
+        updateFromPoint(e.clientX, e.clientY);
+    };
+
+    const move = (e) => {
+        if (!active || e.pointerId !== pointerId) return;
+        updateFromPoint(e.clientX, e.clientY);
+    };
+
+    const end = (e) => {
+        if (active && pointerId !== null && e.pointerId !== undefined && e.pointerId !== pointerId) return;
+        active = false;
+        pointerId = null;
+        resetJoystick();
+    };
+
+    joystickBase.addEventListener('pointerdown', start);
+    window.addEventListener('pointermove', move);
+    window.addEventListener('pointerup', end);
+    window.addEventListener('pointercancel', end);
+}
+
+bindJoystick();
 
 // ==========================================
 // 4.5 粒子系统
@@ -200,13 +336,15 @@ function update() {
     player.isMoving = false;
     
     const angularSpeed = player.speed / GLOBE_RADIUS;
+    const leftPressed = keys.a || keys.ArrowLeft || joystickActive && keys.a;
+    const rightPressed = keys.d || keys.ArrowRight || joystickActive && keys.d;
     
-    if (keys.a || keys.ArrowLeft) {
+    if (leftPressed) {
         worldAngle += angularSpeed;
         player.isMoving = true;
         player.facingRight = false;
     }
-    if (keys.d || keys.ArrowRight) {
+    if (rightPressed) {
         worldAngle -= angularSpeed;
         player.isMoving = true;
         player.facingRight = true;
@@ -261,7 +399,7 @@ function update() {
         if (dist < 60) {
             if (obj.type === 'coin') {
                 obj.collected = true; // 玩家碰到金币，标记为收集
-                coinSound.cloneNode().play().catch(e => console.log("Audio play prevented:", e));
+                playEffectSound(coinSound.cloneNode(true));
             } else if (obj.id) {
                 nearObject = obj; // 只对有 id 的物体显示交互提示
             }
@@ -272,10 +410,10 @@ function update() {
     if (hasUserInteracted && nearObject) {
         if (nearObject.id === 'wish') {
             const allCoinsCollected = interactiveObjects.filter(obj => obj.type === 'coin').every(obj => obj.collected);
-            promptEl.textContent = allCoinsCollected ? 'Make a Wish and Press [SPACE] ' : 'collect all the coins';
+            promptEl.textContent = allCoinsCollected ? (isMobileViewport() ? 'Tap to Make a Wish' : 'Make a Wish and Press [SPACE]') : 'collect all the coins';
             promptEl.style.display = 'block';
         } else {
-            promptEl.textContent = 'Press [SPACE] to Open';
+            promptEl.textContent = isMobileViewport() ? 'Tap to Open' : 'Press [SPACE] to Open';
             promptEl.style.display = 'block';
         }
     } else {
@@ -296,18 +434,24 @@ function draw() {
     let allBgLoaded = imgBg.length > 0 && imgBg.every(img => img.complete && img.naturalWidth !== 0);
 
     if (allBgLoaded) {
-        // 4 层云彩，从 1 到 4 视差速度逐渐增加
         const parallaxSpeeds = [0.02, 0.05, 0.1, 0.2];
+        const isMobile = window.innerWidth <= 768;
         
         imgBg.forEach((img, index) => {
             const speed = parallaxSpeeds[index];
             const skyOffset = (worldAngle * GLOBE_RADIUS * speed) % canvas.width;
-            
-            ctx.drawImage(img, skyOffset, 0, canvas.width, canvas.height);
+            const drawWidth = isMobile ? canvas.width * 1.18 : canvas.width;
+            const drawHeight = canvas.height;
+            const sourceX = 0;
+            const sourceY = 0;
+            const sourceWidth = img.naturalWidth;
+            const sourceHeight = img.naturalHeight;
+
+            ctx.drawImage(img, sourceX, sourceY, sourceWidth, sourceHeight, skyOffset, 0, drawWidth, drawHeight);
             if (skyOffset > 0) {
-                ctx.drawImage(img, skyOffset - canvas.width, 0, canvas.width, canvas.height);
+                ctx.drawImage(img, sourceX, sourceY, sourceWidth, sourceHeight, skyOffset - canvas.width, 0, drawWidth, drawHeight);
             } else {
-                ctx.drawImage(img, skyOffset + canvas.width, 0, canvas.width, canvas.height);
+                ctx.drawImage(img, sourceX, sourceY, sourceWidth, sourceHeight, skyOffset + canvas.width, 0, drawWidth, drawHeight);
             }
         });
     } else {
@@ -358,8 +502,12 @@ function draw() {
         if (obj.collected) return; // 不绘制被收集的金币
         ctx.save();
         ctx.rotate(obj.angle);
+        const isMobile = window.innerWidth <= 768;
+        const mobileScale = isMobile && obj.type !== 'coin' ? 0.8 : 1;
+        const drawW = obj.w * mobileScale;
+        const drawH = obj.h * mobileScale;
         const y_offset = (obj.y_offset || 0) + 5;
-        let objY = -GLOBE_RADIUS - obj.h + 20 + y_offset; // +20 让地基稍微陷进草地中，更贴合
+        let objY = -GLOBE_RADIUS - drawH + 20 + y_offset; // +20 让地基稍微陷进草地中，更贴合
         
         if (obj.type === 'coin') {
             objY -= 6; // Move coins up by 6 pixels
@@ -377,7 +525,7 @@ function draw() {
                     -obj.w/2, objY, obj.w, obj.h
                 );
             } else {
-                ctx.drawImage(obj.img, -obj.w/2, objY, obj.w, obj.h);
+                ctx.drawImage(obj.img, -drawW/2, objY, drawW, drawH);
             }
         }
         ctx.restore();
@@ -553,7 +701,7 @@ function renderProjectsModal() {
         button.addEventListener('click', () => {
             showProject(button.dataset.project);
             const projectSelectSound = new Audio('assets/Free pack/lolurio Free Cozy Game UI SFX Pack/WAV/UI SFX_FEEDBACK_Woop.wav');
-            projectSelectSound.play().catch(() => {});
+            playEffectSound(projectSelectSound);
         });
     });
 
@@ -570,8 +718,7 @@ function openModal(id) {
     setTimeout(() => overlay.classList.add('active'), 10);
 }
 function closeModal() {
-    confirmSound.currentTime = 0;
-    confirmSound.play().catch(e => console.error("Audio play prevented:", e));
+    playEffectSound(confirmSound);
     overlay.classList.remove('active');
     setTimeout(() => overlay.style.display = 'none', 200);
 }
@@ -581,36 +728,7 @@ window.addEventListener('keydown', (e) => {
     if (e.key === ' ' && nearObject) {
         // 阻止网页按空格产生默认向下滚动的行为
         e.preventDefault(); 
-        if (nearObject.id === 'wish') {
-            const allCoinsCollected = interactiveObjects.filter(obj => obj.type === 'coin').every(obj => obj.collected);
-            if (allCoinsCollected) {
-                meowSound.currentTime = 0;
-                meowSound.play().catch(e => console.error("Audio play prevented:", e));
-                
-                wishOpenSound.currentTime = 0;
-                wishOpenSound.play().catch(e => console.error("Audio play prevented:", e));
-                
-                if (!nearObject.hasWished) {
-                    const wishMessages = [
-                        "The wishing well has sensed your coin. It wants to whisper to you: You've been doing so well lately. Make sure to treat yourself to a delicious drink today.",
-                        "The ripples fading across the water will wash away all your anxiety. Try going to bed half an hour early tonight, and sweet dreams!",
-                        "No matter how today went, the wishing well will always be here waiting for you. Tomorrow is a brand new day!",
-                        "Coin tossed successfully! I have a feeling that every traffic light you hit today will turn green just for you.",
-                        "The coin has found its coziest spot at the bottom, sharing its luck with you: there's a good chance you won't have to wait in line for coffee today!",
-                        "Your luck index is off the charts today! If there's something you've been hesitating about, why not just go for it today?"
-                    ];
-                    const randomMsg = wishMessages[Math.floor(Math.random() * wishMessages.length)];
-                    modalData['wish'] = `<h2 class="text-4xl font-bold text-[#ffb347] mb-3">WISH ✨</h2><p class="text-xl">${randomMsg}</p>`;
-                    nearObject.hasWished = true;
-                }
-                
-                openModal(nearObject.id);
-            }
-        } else {
-            bubbleSound.currentTime = 0;
-            bubbleSound.play().catch(e => console.error("Audio play prevented:", e));
-            openModal(nearObject.id);
-        }
+        openNearbyObject();
     }
 });
 document.getElementById('modal-close').addEventListener('click', closeModal);
@@ -677,6 +795,19 @@ function setEffectEnabled(enabled) {
         }
     });
     updateSoundUI();
+}
+
+function playEffectSound(audio) {
+    if (!audio || !isEffectEnabled) return;
+    try {
+        audio.currentTime = 0;
+        const playPromise = audio.play();
+        if (playPromise && typeof playPromise.catch === 'function') {
+            playPromise.catch(() => {});
+        }
+    } catch (error) {
+        console.warn('Effect sound play failed:', error);
+    }
 }
 
 if (soundBtn && soundMenu) {

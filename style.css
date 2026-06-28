@@ -11,6 +11,30 @@ canvas, img {
     image-rendering: crisp-edges;
 }
 
+.joystick-base {
+    width: 74px;
+    height: 74px;
+    border-radius: 999px;
+    border: 3px solid #5c2e0b;
+    background: rgba(243, 217, 164, 0.75);
+    box-shadow: inset -2px -2px 0 #b5834b, inset 2px 2px 0 #fffdf9;
+    position: relative;
+    touch-action: none;
+}
+
+.joystick-knob {
+    width: 34px;
+    height: 34px;
+    border-radius: 999px;
+    background: #9c2a2a;
+    border: 3px solid #421f06;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    transition: transform 0.08s ease;
+}
+
 /* 星露谷风格标准双层木质UI容器 */
 .stardew-container {
     background-color: #f3d9a4; /* 温暖的羊皮纸黄 */
@@ -143,4 +167,62 @@ canvas, img {
 
 #modal-body p {
     margin-bottom: 0.5rem;
+}
+
+@media (max-width: 768px) {
+    header {
+        padding: 5px 6px;
+    }
+
+    header > div:first-child {
+        gap: 4px;
+        flex: 1 1 auto;
+    }
+
+    nav {
+        max-width: 100%;
+        gap: 4px;
+        scrollbar-width: none;
+    }
+
+    nav::-webkit-scrollbar {
+        display: none;
+    }
+
+    .stardew-tab-btn {
+        padding-left: 5px;
+        padding-right: 5px;
+        font-size: 0.62rem;
+        line-height: 1;
+        white-space: normal;
+        word-break: break-word;
+    }
+
+    .joystick-base {
+        width: 58px;
+        height: 58px;
+    }
+
+    .joystick-knob {
+        width: 26px;
+        height: 26px;
+    }
+
+    #interactive-mode {
+        overflow: hidden;
+    }
+
+    #interaction-prompt {
+        bottom: 4.2rem;
+    }
+
+    #modal-content {
+        max-height: 86dvh;
+    }
+
+    #modal-body {
+        max-height: calc(86dvh - 2rem);
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+    }
 }
