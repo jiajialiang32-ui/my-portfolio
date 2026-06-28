@@ -226,3 +226,15 @@ canvas, img {
         -webkit-overflow-scrolling: touch;
     }
 }
+
+@media (min-width: 769px) {
+    .joystick-base {
+        display: none;
+    }
+}
+
+@media (orientation: landscape) and (max-height: 500px) {
+    #gameCanvas {
+        transform: translateY(40px);
+    }
+}
