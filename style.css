@@ -131,3 +131,16 @@ canvas, img {
     transform: scale(1);
     opacity: 1;
 }
+
+#modal-body {
+    max-height: calc(90vh - 3rem);
+    overflow: hidden;
+}
+
+#modal-body h2 {
+    margin-bottom: 0.75rem;
+}
+
+#modal-body p {
+    margin-bottom: 0.5rem;
+}

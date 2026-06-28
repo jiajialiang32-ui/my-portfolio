@@ -148,8 +148,15 @@ const interactiveObjects = [
 // 4. 键盘输入监听逻辑
 // ==========================================
 const keys = { a: false, d: false, ArrowLeft: false, ArrowRight: false };
-window.addEventListener('keydown', (e) => { if (e.key.toLowerCase() in keys || e.key in keys) keys[e.key] = true; });
+window.addEventListener('keydown', (e) => {
+    if (e.key.toLowerCase() in keys || e.key in keys) {
+        keys[e.key] = true;
+        markUserInteracted();
+    }
+});
 window.addEventListener('keyup', (e) => { if (e.key.toLowerCase() in keys || e.key in keys) keys[e.key] = false; });
+window.addEventListener('click', markUserInteracted, { once: false });
+window.addEventListener('touchstart', markUserInteracted, { once: false });
 
 // ==========================================
 // 4.5 粒子系统
@@ -182,6 +189,11 @@ function spawnParticle(x, y, facingRight) {
 }
 
 let nearObject = null;
+let hasUserInteracted = false;
+
+function markUserInteracted() {
+    hasUserInteracted = true;
+}
 
 function update() {
     const wasMoving = player.isMoving;
@@ -257,7 +269,7 @@ function update() {
     });
 
     const promptEl = document.getElementById('interaction-prompt');
-    if (nearObject) {
+    if (hasUserInteracted && nearObject) {
         if (nearObject.id === 'wish') {
             const allCoinsCollected = interactiveObjects.filter(obj => obj.type === 'coin').every(obj => obj.collected);
             promptEl.textContent = allCoinsCollected ? 'Make a Wish and Press [SPACE] ' : 'collect all the coins';
@@ -367,16 +379,6 @@ function draw() {
             } else {
                 ctx.drawImage(obj.img, -obj.w/2, objY, obj.w, obj.h);
             }
-        } else {
-            // 备用像素黑框方块
-            ctx.fillStyle = '#421f06';
-            ctx.fillRect(-obj.w/2 - 4, objY - 4, obj.w + 8, obj.h + 8);
-            ctx.fillStyle = obj.color;
-            ctx.fillRect(-obj.w/2, objY, obj.w, obj.h);
-            ctx.fillStyle = '#fffdf9';
-            ctx.font = '30px monospace';
-            ctx.textAlign = 'center';
-            ctx.fillText(obj.emoji, 0, objY + obj.h/2 + 10);
         }
         ctx.restore();
     });
@@ -467,10 +469,10 @@ gameLoop();
 const projectData = [
     {
         id: 'roi-analysis',
-        title: 'Canada Social Media ROI Analysis',
-        description: 'This project focuses on analyzing social media advertising performance in the Canadian market and identifying which channels generate stronger conversions and returns.',
-        skills: ['Python', 'SQL', 'Power BI', 'Data Analysis'],
-        highlights: 'The analysis helps prioritize high-value channels and improve budget allocation decisions.'
+        title: 'North American Social Media Marketing ROI Optimization & Predictive Simulation',
+        description: 'This project analyzes a synthetic marketing dataset for a Canadian FMCG brand and evaluates how budget shifts could improve ROI for the 18–25 female audience. It combines Python-based simulation, SQL-style aggregation, and a Power BI dashboard into a compact portfolio project.',
+        skills: ['Python: pandas, numpy, matplotlib, pandasql', 'Notebook: Jupyter / ipykernel', 'Visualization: Power BI'],
+        highlights: 'The project explores how smarter budget allocation and audience targeting can improve campaign efficiency and expected returns.'
     },
     {
         id: 'subscription-testing',
@@ -485,16 +487,23 @@ const projectData = [
         description: 'This portfolio website turns my background and projects into an interactive experience inspired by a cozy pixel-style farm world.',
         skills: ['HTML', 'CSS', 'JavaScript', 'UI Design'],
         highlights: 'The goal was to make complex information easy to explore while keeping the experience engaging.'
+    },
+    {
+        id: 'telecom-churn',
+        title: 'Telecom_Churn_Intelligence_Dashboard',
+        description: 'This repository contains a robust, interactive Business Intelligence Dashboard built with Power BI, leveraging the Kaggle Telco Customer Churn dataset (7,043 records). By bridging mathematical rigor with strategic business administration, this project transforms raw operational data into actionable retention assets. The analysis is structured to provide both Global KPI Oversight for executives and Granular Risk Mitigation for product and marketing teams, aiming to identify systemic revenue leakage and deploy data-driven interventions.',
+        skills: ['Power BI', 'Data Analysis', 'Business Strategy'],
+        highlights: 'The dashboard focuses on customer retention insights, churn risk visibility, and executive-ready business recommendations.'
     }
 ];
 
 const modalData = {
-    about: `<h2 class="text-4xl font-bold text-[#9e331f] mb-3">ABOUT ME 📬</h2><p class="text-xl">你好，我是 Makayla Liang!一个在商科与数学世界里修炼的产品设计师。我很擅长平衡冰冷的数据指标与温暖的用户交互体验。顺便一说，农场里还养了一只叫 Jujubee 的仓鼠！🐹</p>`,
+    about: `<h2 class="text-4xl font-bold text-[#9e331f] mb-3">ABOUT ME 📬</h2><p class="text-xl">Dedicated BBA & Mathematics double degree student at Wilfrid Laurier University and University of Waterloo, currently in my second year. I possess a strong foundation in quantitative analysis, Python programming, and strategic business frameworks, developed through systematic study of live case studies, economics, and advanced mathematics. Currently expanding my expertise in accounting, optimization theory, and statistics, while proactively mastering additional business skills independently. I am eager to leverage my interdisciplinary background to contribute to high-impact projects in Data & Analytics, Finance, Consulting, and Product Growth.</p>`,
     skills: `<h2 class="text-4xl font-bold text-[#3a5f25] mb-3">SKILLS TREE 🌲</h2><p class="text-xl">💻 Data Analytics & Programming: Python (Pandas, NumPy, Matplotlib), SQL</p>
                                                                                     <p class="text-xl">📊 Business Intelligence & Automation: Power BI, Microsoft Excel (VBA)</p>
                                                                                     <p class="text-xl">🧠 Core Competencies: Critical Thinking, Data-Driven Problem Solving, Quantitative Analysis</p>`,
     projects: `<h2 class="text-4xl font-bold text-[#b97235] mb-3">PROJECTS 📦</h2>`,
-    contact: `<h2 class="text-4xl font-bold text-[#4d7298] mb-3">CONTACT 🎣</h2><p class="text-xl">📱Phone Number:437-829-7174</p><p class="text-xl">📮Email: jiajialiang32@gmail.com</p>`,
+    contact: `<h2 class="text-4xl font-bold text-[#4d7298] mb-3">CONTACT 🎣</h2><p class="text-xl">📱Phone Number: 437-829-7174</p><p class="text-xl">📮Email: <a href="mailto:jiajialiang32@gmail.com" class="underline">jiajialiang32@gmail.com</a></p><p class="text-xl">💼LinkedIn: <a href="https://www.linkedin.com/in/makayla-liang-26a2393a7/" target="_blank" rel="noopener noreferrer" class="underline">Makayla Liang</a></p>`,
     wish: `<h2 class="text-4xl font-bold text-[#ffb347] mb-3">WISH ✨</h2><p class="text-xl">你的愿望已经收到啦！(Your wish has been received!)</p>`
 };
 
@@ -535,11 +544,17 @@ function renderProjectsModal() {
             </div>
             <p class="text-lg opacity-90">${project.highlights}</p>
             ${project.id === 'subscription-testing' ? '<a href="https://github.com/jiajialiang32-ui/ABtesting" target="_blank" rel="noopener noreferrer" class="project-link-btn">View GitHub Project</a>' : ''}
+            ${project.id === 'roi-analysis' ? '<a href="https://github.com/jiajialiang32-ui/roi-project" target="_blank" rel="noopener noreferrer" class="project-link-btn">View GitHub Project</a>' : ''}
+            ${project.id === 'telecom-churn' ? '<a href="https://github.com/jiajialiang32-ui/Telecom_Churn_Intelligence_Dashboard" target="_blank" rel="noopener noreferrer" class="project-link-btn">View GitHub Project</a>' : ''}
         `;
     }
 
     projectButtons.forEach(button => {
-        button.addEventListener('click', () => showProject(button.dataset.project));
+        button.addEventListener('click', () => {
+            showProject(button.dataset.project);
+            const projectSelectSound = new Audio('assets/Free pack/lolurio Free Cozy Game UI SFX Pack/WAV/UI SFX_FEEDBACK_Woop.wav');
+            projectSelectSound.play().catch(() => {});
+        });
     });
 
     showProject(projectData[0].id);
