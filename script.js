@@ -737,6 +737,29 @@ const photobookData = [
     }
 ];
 
+const animalData = [
+    {
+        id: 'animal1',
+        img: 'assets/photobook/1.jpg',
+        name: 'Photo 1'
+    },
+    {
+        id: 'animal2',
+        img: 'assets/photobook/2.jpg',
+        name: 'Photo 2'
+    },
+    {
+        id: 'animal3',
+        img: 'assets/photobook/3.jpg',
+        name: 'Photo 3'
+    },
+    {
+        id: 'animal4',
+        img: 'assets/photobook/4.jpg',
+        name: 'Photo 4'
+    }
+];
+
 const modalData = {
     about: `<h2 class="text-4xl font-bold text-[#9e331f] mb-3">ABOUT ME 📬</h2><p class="text-xl">Dedicated BBA & Mathematics double degree student at Wilfrid Laurier University and University of Waterloo, currently in my second year. I possess a strong foundation in quantitative analysis, Python programming, and strategic business frameworks, developed through systematic study of live case studies, economics, and advanced mathematics. Currently expanding my expertise in accounting, optimization theory, and statistics, while proactively mastering additional business skills independently. I am eager to leverage my interdisciplinary background to contribute to high-impact projects in Data & Analytics, Finance, Consulting, and Product Growth.</p>`,
     skills: `<h2 class="text-4xl font-bold text-[#3a5f25] mb-3">SKILLS TREE 🌲</h2><p class="text-xl">💻 Data Analytics & Programming: Python (Pandas, NumPy, Matplotlib), SQL</p>
@@ -821,17 +844,20 @@ function renderOrangeCatModal() {
         <h2 class="text-4xl font-bold text-[#b97235] mb-2">I found makayla's Photobook</h2>
         <p class="text-xl mb-4">A friendly little tabby cat is meowing at you, it seems to have found something it wants to share with you.</p>
         <div class="flex border-b-4 border-[#5c2e0b] mb-4">
-            <button class="cat-tab-btn active" data-tab="photos">相册</button>
+            <button class="cat-tab-btn active" data-tab="photos">View</button>
+            <button class="cat-tab-btn" data-tab="animals">Animals</button>
         </div>
         <div id="cat-tab-content"></div>
         <button id="next-photo-btn" class="project-link-btn">Next Photo</button>
     `;
 
     const contentEl = document.getElementById('cat-tab-content');
+    const nextButton = document.getElementById('next-photo-btn');
+    const tabButtons = body.querySelectorAll('.cat-tab-btn');
 
     function renderPhotosTab() {
         contentEl.innerHTML = `
-            <p class="text-xl mb-4">小橘猫在旅途中拍摄的珍贵风景。</p>
+            <p class="text-xl mb-4">Pleasent sceneries.</p>
             <div class="photobook-stack">
                 ${photobookData.map((photo, index) => `
                     <div class="photo-card" data-index="${index}">
@@ -849,18 +875,60 @@ function renderOrangeCatModal() {
             card.style.transform = `translate(${randomTranslateX}px, ${randomTranslateY}px) rotate(${randomRotate}deg)`;
             card.style.zIndex = index;
         });
+        nextButton.style.display = 'inline-block';
     }
+
+    function renderAnimalsTab() {
+        contentEl.innerHTML = `
+            <p class="text-xl mb-4">Makayls's furry friend.</p>
+            <div class="photobook-stack">
+                ${animalData.map((animal, index) => `
+                    <div class="photo-card" data-index="${index}">
+                        <img src="${animal.img}" alt="${animal.name}" loading="lazy">
+                    </div>
+                `).join('')}
+            </div>
+        `;
+        
+        const photoCards = contentEl.querySelectorAll('.photo-card');
+        photoCards.forEach((card, index) => {
+            const randomRotate = Math.random() * 30 - 15;
+            const randomTranslateX = Math.random() * 40 - 20;
+            const randomTranslateY = Math.random() * 40 - 20;
+            card.style.transform = `translate(${randomTranslateX}px, ${randomTranslateY}px) rotate(${randomRotate}deg)`;
+            card.style.zIndex = index;
+        });
+        nextButton.style.display = 'inline-block';
+    }
+
+    tabButtons.forEach(button => {
+        button.addEventListener('click', () => {
+            const tab = button.dataset.tab;
+
+            tabButtons.forEach(btn => btn.classList.remove('active'));
+            button.classList.add('active');
+
+            if (tab === 'photos') {
+                renderPhotosTab();
+            } else if (tab === 'animals') {
+                renderAnimalsTab();
+            }
+        });
+    });
 
     // Initially render the photos tab
     renderPhotosTab();
 
-    const nextButton = document.getElementById('next-photo-btn');
     if (nextButton) {
         nextButton.addEventListener('click', () => {
-            // Cycle the photobookData array
-            photobookData.push(photobookData.shift());
-            // Re-render the photo stack
-            renderPhotosTab();
+            const activeTab = body.querySelector('.cat-tab-btn.active').dataset.tab;
+            if (activeTab === 'photos') {
+                photobookData.push(photobookData.shift());
+                renderPhotosTab();
+            } else if (activeTab === 'animals') {
+                animalData.push(animalData.shift());
+                renderAnimalsTab();
+            }
             playEffectSound(new Audio('assets/Free pack/lolurio Free Cozy Game UI SFX Pack/WAV/UI SFX_MENU_Scroll.ogg'));
         });
     }
