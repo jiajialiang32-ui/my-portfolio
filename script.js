@@ -981,6 +981,9 @@ function renderOrangeCatModal() {
 
     tabButtons.forEach(button => {
         button.addEventListener('click', () => {
+            const tabSwitchSound = new Audio('assets/Free pack/lolurio Free Cozy Game UI SFX Pack/WAV/UI SFX_FEEDBACK_Woop.wav');
+            playEffectSound(tabSwitchSound);
+
             const tab = button.dataset.tab;
 
             tabButtons.forEach(btn => btn.classList.remove('active'));
@@ -1012,7 +1015,7 @@ function renderOrangeCatModal() {
                 makaylaData.push(makaylaData.shift());
                 renderMakaylaTab();
             }
-            playEffectSound(new Audio('assets/Free pack/lolurio Free Cozy Game UI SFX Pack/WAV/UI SFX_MENU_Scroll.ogg'));
+            playEffectSound(new Audio('assets/Free pack/lolurio Free Cozy Game UI SFX Pack/WAV/UI SFX_MENU_Hover.wav'));
         });
     }
 }
