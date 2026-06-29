@@ -436,17 +436,30 @@ function update() {
     }
 
     const promptEl = document.getElementById('interaction-prompt');
-    if (hasUserInteracted && nearObject && nearObject.id !== 'orange-cat') {
-        if (nearObject.id === 'wish') {
+    if (hasUserInteracted && nearObject) { // Removed the condition nearObject.id !== 'orange-cat'
+        let promptText = '';
+        let addBouncingClass = false;
+
+        if (nearObject.id === 'orange-cat') {
+            promptText = isMobileViewport() ? 'Tap to Interact' : 'Press [SPACE] to Interact';
+            addBouncingClass = true; // Add bouncing effect for orange cat
+        } else if (nearObject.id === 'wish') {
             const allCoinsCollected = interactiveObjects.filter(obj => obj.type === 'coin').every(obj => obj.collected);
-            promptEl.textContent = allCoinsCollected ? (isMobileViewport() ? 'Tap to Make a Wish' : 'Make a Wish and Press [SPACE]') : 'collect all the coins';
-            promptEl.style.display = 'block';
+            promptText = allCoinsCollected ? (isMobileViewport() ? 'Tap to Make a Wish' : 'Make a Wish and Press [SPACE]') : 'collect all the coins';
         } else {
-            promptEl.textContent = isMobileViewport() ? 'Tap to Open' : 'Press [SPACE] to Open';
-            promptEl.style.display = 'block';
+            promptText = isMobileViewport() ? 'Tap to Open' : 'Press [SPACE] to Open';
+        }
+        
+        promptEl.textContent = promptText;
+        promptEl.style.display = 'block';
+        if (addBouncingClass) {
+            promptEl.classList.add('bouncing-prompt');
+        } else {
+            promptEl.classList.remove('bouncing-prompt');
         }
     } else {
         promptEl.style.display = 'none';
+        promptEl.classList.remove('bouncing-prompt');
     }
 }
 
@@ -689,6 +702,41 @@ const projectData = [
     }
 ];
 
+const photobookData = [
+    {
+        id: 'photo1',
+        img: 'assets/photobook2/3502ee601c393cef19bbf27622cb1a.JPG',
+    },
+    {
+        id: 'photo2',
+        img: 'assets/photobook2/42e1a9be81113e662c1487aa5dc328.JPG',
+    },
+    {
+        id: 'photo3',
+        img: 'assets/photobook2/7370447fda09d8b737f21eec74c000.JPG',
+    },
+    {
+        id: 'photo4',
+        img: 'assets/photobook2/IMG_1959.jpg',
+    },
+    {
+        id: 'photo5',
+        img: 'assets/photobook2/IMG_1960.jpg',
+    },
+    {
+        id: 'photo6',
+        img: 'assets/photobook2/IMG_1961.jpg',
+    },
+    {
+        id: 'photo7',
+        img: 'assets/photobook2/IMG_1962.jpg',
+    },
+    {
+        id: 'photo8',
+        img: 'assets/photobook2/f4e92226f4fe69d69b24baa95b2c18.JPG',
+    }
+];
+
 const modalData = {
     about: `<h2 class="text-4xl font-bold text-[#9e331f] mb-3">ABOUT ME 📬</h2><p class="text-xl">Dedicated BBA & Mathematics double degree student at Wilfrid Laurier University and University of Waterloo, currently in my second year. I possess a strong foundation in quantitative analysis, Python programming, and strategic business frameworks, developed through systematic study of live case studies, economics, and advanced mathematics. Currently expanding my expertise in accounting, optimization theory, and statistics, while proactively mastering additional business skills independently. I am eager to leverage my interdisciplinary background to contribute to high-impact projects in Data & Analytics, Finance, Consulting, and Product Growth.</p>`,
     skills: `<h2 class="text-4xl font-bold text-[#3a5f25] mb-3">SKILLS TREE 🌲</h2><p class="text-xl">💻 Data Analytics & Programming: Python (Pandas, NumPy, Matplotlib), SQL</p>
@@ -768,9 +816,62 @@ function renderProjectsModal() {
     showProject(projectData[0].id);
 }
 
+function renderOrangeCatModal() {
+    body.innerHTML = `
+        <h2 class="text-4xl font-bold text-[#b97235] mb-2">I found makayla's Photobook</h2>
+        <p class="text-xl mb-4">A friendly little tabby cat is meowing at you, it seems to have found something it wants to share with you.</p>
+        <div class="flex border-b-4 border-[#5c2e0b] mb-4">
+            <button class="cat-tab-btn active" data-tab="photos">相册</button>
+        </div>
+        <div id="cat-tab-content"></div>
+        <button id="next-photo-btn" class="project-link-btn">Next Photo</button>
+    `;
+
+    const contentEl = document.getElementById('cat-tab-content');
+
+    function renderPhotosTab() {
+        contentEl.innerHTML = `
+            <p class="text-xl mb-4">小橘猫在旅途中拍摄的珍贵风景。</p>
+            <div class="photobook-stack">
+                ${photobookData.map((photo, index) => `
+                    <div class="photo-card" data-index="${index}">
+                        <img src="${photo.img}" alt="A precious landscape photo taken by Orange Cat" loading="lazy">
+                    </div>
+                `).join('')}
+            </div>
+        `;
+        
+        const photoCards = contentEl.querySelectorAll('.photo-card');
+        photoCards.forEach((card, index) => {
+            const randomRotate = Math.random() * 30 - 15; // -15 to 15 degrees
+            const randomTranslateX = Math.random() * 40 - 20; // -20 to 20 px
+            const randomTranslateY = Math.random() * 40 - 20; // -20 to 20 px
+            card.style.transform = `translate(${randomTranslateX}px, ${randomTranslateY}px) rotate(${randomRotate}deg)`;
+            card.style.zIndex = index;
+        });
+    }
+
+    // Initially render the photos tab
+    renderPhotosTab();
+
+    const nextButton = document.getElementById('next-photo-btn');
+    if (nextButton) {
+        nextButton.addEventListener('click', () => {
+            // Cycle the photobookData array
+            photobookData.push(photobookData.shift());
+            // Re-render the photo stack
+            renderPhotosTab();
+            playEffectSound(new Audio('assets/Free pack/lolurio Free Cozy Game UI SFX Pack/WAV/UI SFX_MENU_Scroll.ogg'));
+        });
+    }
+}
+
+
 function openModal(id) {
     if (id === 'projects') {
         renderProjectsModal();
+    } else if (id === 'orange-cat') {
+        renderOrangeCatModal();
     } else if (modalData[id]) {
         body.innerHTML = modalData[id];
     }

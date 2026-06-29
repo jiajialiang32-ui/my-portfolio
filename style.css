@@ -249,3 +249,109 @@ canvas, img {
         transform: translateY(40px);
     }
 }
+
+.cat-tab-btn {
+    background-color: #e4ca93;
+    border: 4px solid #5c2e0b;
+    border-bottom: none;
+    box-shadow: inset -2px -2px 0px #b5834b, inset 2px 2px 0px #fffdf9;
+    padding: 10px 16px;
+    text-align: center;
+    cursor: pointer;
+    color: #421f06;
+    font-size: 1.25rem;
+    margin-right: 4px;
+    position: relative;
+    top: 4px;
+}
+
+.cat-tab-btn.active {
+    background-color: #f3d9a4;
+    border-bottom: 4px solid #f3d9a4;
+}
+
+.photobook-stack {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    width: 100%;
+    height: 300px; /* Adjust height as needed */
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+
+.photo-card {
+    position: absolute;
+    width: 200px; /* Base width for cards */
+    height: 250px; /* Base height for cards */
+    border: 4px solid #ffffff;
+    box-shadow: 8px 8px 0px rgba(0, 0, 0, 0.3);
+    background-color: #f8e7bf; /* Card background */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.photo-card img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* Ensures images cover the card area */
+    display: block;
+}
+
+/* Stacking effect - using nth-last-child to ensure proper z-index and offset */
+.photobook-stack .photo-card:nth-last-child(1) {
+    transform: translate(0px, 0px) rotate(0deg);
+    z-index: 8;
+}
+.photobook-stack .photo-card:nth-last-child(2) {
+    transform: translate(-10px, -5px) rotate(-3deg);
+    z-index: 7;
+}
+.photobook-stack .photo-card:nth-last-child(3) {
+    transform: translate(10px, 5px) rotate(3deg);
+    z-index: 6;
+}
+.photobook-stack .photo-card:nth-last-child(4) {
+    transform: translate(-15px, -10px) rotate(-5deg);
+    z-index: 5;
+}
+.photobook-stack .photo-card:nth-last-child(5) {
+    transform: translate(15px, 10px) rotate(5deg);
+    z-index: 4;
+}
+.photobook-stack .photo-card:nth-last-child(6) {
+    transform: translate(-20px, -15px) rotate(-7deg);
+    z-index: 3;
+}
+.photobook-stack .photo-card:nth-last-child(7) {
+    transform: translate(20px, 15px) rotate(7deg);
+    z-index: 2;
+}
+.photobook-stack .photo-card:nth-last-child(8) {
+    transform: translate(-25px, -20px) rotate(-9deg);
+    z-index: 1;
+}
+
+/* Hide extra cards beyond a certain number if needed, or style them to be very subtle */
+.photobook-stack .photo-card:nth-last-child(n+9) {
+    opacity: 0;
+    pointer-events: none;
+}
+
+
+@keyframes bounce {
+    0%, 100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-5px);
+    }
+}
+
+.bouncing-prompt {
+    animation: bounce 1s infinite;
+}
