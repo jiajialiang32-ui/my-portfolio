@@ -445,7 +445,7 @@ function update() {
             addBouncingClass = true; // Add bouncing effect for orange cat
         } else if (nearObject.id === 'wish') {
             const allCoinsCollected = interactiveObjects.filter(obj => obj.type === 'coin').every(obj => obj.collected);
-            promptText = allCoinsCollected ? (isMobileViewport() ? 'Tap to Make a Wish' : 'Make a Wish and Press [SPACE]') : 'collect all the coins';
+            promptText = allCoinsCollected ? (isMobileViewport() ? 'Tap to Make a Wish' : 'Make a wish and press [Space] to toss your coins') : 'collect all the coins';
         } else {
             promptText = isMobileViewport() ? 'Tap to Open' : 'Press [SPACE] to Open';
         }
