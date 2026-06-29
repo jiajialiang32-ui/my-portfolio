@@ -757,6 +757,59 @@ const animalData = [
         id: 'animal4',
         img: 'assets/photobook/4.jpg',
         name: 'Photo 4'
+    },
+    {
+        id: 'animal5',
+        img: 'assets/photobook/8164e69227603b78847808ee7fb1c1.JPG',
+        name: 'Photo 5'
+    },
+    {
+        id: 'animal6',
+        img: 'assets/photobook/31475ddef9a1cd26b387a37a72b87e.JPG',
+        name: 'Photo 6'
+    },
+    {
+        id: 'animal7',
+        img: 'assets/photobook/ddcb2c9fc98537d2dcf0f1c1a73767.JPG',
+        name: 'Photo 7'
+    },
+    {
+        id: 'animal8',
+        img: 'assets/photobook/facfadc7e0777ba23a7071afb3fffe.JPG',
+        name: 'Photo 8'
+    }
+];
+
+const makaylaData = [
+    {
+        id: 'makayla1',
+        img: 'assets/photobook3/918a44cd1c549c7e381aa0cdbb3609.JPG',
+        name: 'Makayla 1'
+    },
+    {
+        id: 'makayla2',
+        img: 'assets/photobook3/5612d39e5bf676568239f3d335a12c.JPG',
+        name: 'Makayla 2'
+    },
+    {
+        id: 'makayla3',
+        img: 'assets/photobook3/23762c8f255f4ab285d0fe4ced45cd.JPG',
+        name: 'Makayla 3'
+    },
+    {
+        id: 'makayla4',
+        img: 'assets/photobook3/IMG_1973.JPG',
+        name: 'Makayla 4'
+    },
+    {
+        id: 'makayla5',
+        img: 'assets/photobook3/IMG_1975.jpg',
+        name: 'Makayla 5'
+    },
+    {
+        id: 'makayla6',
+        img: 'assets/photobook3/IMG_1979.jpg',
+        name: 'Makayla 6'
     }
 ];
 
@@ -846,6 +899,9 @@ function renderOrangeCatModal() {
         <div class="flex border-b-4 border-[#5c2e0b] mb-4">
             <button class="cat-tab-btn active" data-tab="photos">View</button>
             <button class="cat-tab-btn" data-tab="animals">Animals</button>
+            <button class="cat-tab-btn" data-tab="makayla">Makayla</button>
+        </div>
+        </div>
         </div>
         <div id="cat-tab-content"></div>
         <button id="next-photo-btn" class="project-link-btn">Next Photo</button>
@@ -901,6 +957,28 @@ function renderOrangeCatModal() {
         nextButton.style.display = 'inline-block';
     }
 
+    function renderMakaylaTab() {
+        contentEl.innerHTML = `
+            <p class="text-xl mb-4">Photos of Makayla.</p>
+            <div class="photobook-stack">
+                ${makaylaData.map((photo, index) => `
+                    <div class="photo-card" data-index="${index}">
+                        <img src="${photo.img}" alt="${photo.name}" loading="lazy">
+                    </div>
+                `).join('')}
+            </div>
+        `;
+        const photoCards = contentEl.querySelectorAll('.photo-card');
+        photoCards.forEach((card, index) => {
+            const randomRotate = Math.random() * 30 - 15;
+            const randomTranslateX = Math.random() * 40 - 20;
+            const randomTranslateY = Math.random() * 40 - 20;
+            card.style.transform = `translate(${randomTranslateX}px, ${randomTranslateY}px) rotate(${randomRotate}deg)`;
+            card.style.zIndex = index;
+        });
+        nextButton.style.display = 'inline-block';
+    }
+
     tabButtons.forEach(button => {
         button.addEventListener('click', () => {
             const tab = button.dataset.tab;
@@ -912,6 +990,8 @@ function renderOrangeCatModal() {
                 renderPhotosTab();
             } else if (tab === 'animals') {
                 renderAnimalsTab();
+            } else if (tab === 'makayla') {
+                renderMakaylaTab();
             }
         });
     });
@@ -928,6 +1008,9 @@ function renderOrangeCatModal() {
             } else if (activeTab === 'animals') {
                 animalData.push(animalData.shift());
                 renderAnimalsTab();
+            } else if (activeTab === 'makayla') {
+                makaylaData.push(makaylaData.shift());
+                renderMakaylaTab();
             }
             playEffectSound(new Audio('assets/Free pack/lolurio Free Cozy Game UI SFX Pack/WAV/UI SFX_MENU_Scroll.ogg'));
         });
