@@ -810,6 +810,11 @@ const makaylaData = [
         id: 'makayla6',
         img: 'assets/photobook3/IMG_1979.jpg',
         name: 'Makayla 6'
+    },
+    {
+        id: 'makayla7',
+        img: 'assets/photobook3/a13fc7a4525bd1f5872f6ccee821df.JPG',
+        name: 'Makayla 7'
     }
 ];
 
@@ -894,7 +899,7 @@ function renderProjectsModal() {
 
 function renderOrangeCatModal() {
     body.innerHTML = `
-        <h2 class="text-4xl font-bold text-[#b97235] mb-2">I found makayla's Photobook</h2>
+        <h2 class="text-4xl font-bold text-[#b97235] mb-2">I Found Makayla's Photobook</h2>
         <p class="text-xl mb-4">A friendly little tabby cat is meowing at you, it seems to have found something it wants to share with you.</p>
         <div class="flex border-b-4 border-[#5c2e0b] mb-4">
             <button class="cat-tab-btn active" data-tab="photos">View</button>
@@ -913,7 +918,7 @@ function renderOrangeCatModal() {
 
     function renderPhotosTab() {
         contentEl.innerHTML = `
-            <p class="text-xl mb-4">Pleasent sceneries.</p>
+            <p class="text-xl mb-4">Pleasant sceneries.</p>
             <div class="photobook-stack">
                 ${photobookData.map((photo, index) => `
                     <div class="photo-card" data-index="${index}">
@@ -936,7 +941,7 @@ function renderOrangeCatModal() {
 
     function renderAnimalsTab() {
         contentEl.innerHTML = `
-            <p class="text-xl mb-4">Makayls's furry friend.</p>
+            <p class="text-xl mb-4">Makayla's furry friend.</p>
             <div class="photobook-stack">
                 ${animalData.map((animal, index) => `
                     <div class="photo-card" data-index="${index}">
