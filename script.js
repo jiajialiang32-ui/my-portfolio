@@ -420,7 +420,7 @@ function update() {
                 obj.collected = true; // 玩家碰到金币，标记为收集
                 playEffectSound(coinSound.cloneNode(true));
             } else if (obj.id === 'orange-cat' && !obj.soundPlayed) {
-                playEffectSound(orangeCatSound.cloneNode(true));
+                playEffectSound(meowSound.cloneNode(true));
                 obj.soundPlayed = true;
             } else if (obj.id) {
                 nearObject = obj; // 只对有 id 的物体显示交互提示
