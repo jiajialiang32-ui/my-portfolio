@@ -244,6 +244,11 @@ canvas, img {
     #modal-overlay[data-current-modal="wish"] #modal-content {
         margin-top: 0; /* Remove mt-16 for wish modal */
     }
+
+    #start-btn {
+        font-size: 1.5rem; /* Larger font size for mobile ENTER button */
+        padding: 1rem 2rem; /* Larger padding for mobile ENTER button */
+    }
 }
 
 @media (min-width: 769px) {
@@ -333,4 +338,35 @@ canvas, img {
 #loading-screen.fade-out {
     opacity: 0;
     visibility: hidden;
+}
+
+/* Fade-in/out animations */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes fadeOut {
+    from { opacity: 1; }
+    to { opacity: 0; }
+}
+
+.fade-in {
+    animation: fadeIn 1s ease-in-out forwards;
+}
+
+.fade-out {
+    animation: fadeOut 1s ease-in-out forwards;
+}
+
+/* Initial state for main content */
+header, main {
+    opacity: 0;
+    transition: opacity 1s ease-in-out;
+}
+
+/* State when game has started */
+body.game-started header,
+body.game-started main {
+    opacity: 1;
 }

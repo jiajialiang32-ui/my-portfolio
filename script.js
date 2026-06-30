@@ -521,7 +521,7 @@ function draw() {
         imgBg.forEach((img, index) => {
             const speed = parallaxSpeeds[index];
             const skyOffset = (worldAngle * GLOBE_RADIUS * speed) % canvas.width;
-            const drawWidth = isMobile ? canvas.width * 1.18 : canvas.width;
+            const drawWidth = isMobile ? canvas.width * 1.6 : canvas.width;
             const drawHeight = canvas.height;
             const sourceX = 0;
             const sourceY = 0;
@@ -1214,8 +1214,18 @@ const startBtn = document.getElementById('start-btn');
 // Listener for the main start button
 startBtn.addEventListener('click', () => {
     initAudio(); // Initialize audio context and play music
-    startScreen.style.display = 'none'; // Hide the start screen
-    
+
+    // Fade out the start screen
+    startScreen.classList.add('fade-out');
+
+    // After the fade-out animation, hide the start screen
+    setTimeout(() => {
+        startScreen.style.display = 'none';
+    }, 1000); // Match animation duration
+
+    // Add the 'game-started' class to the body to trigger the fade-in of the main content
+    document.body.classList.add('game-started');
+
     // Now that the user has interacted and the main experience has begun,
     // load the non-critical assets in the background.
     loadNonCriticalAssets();
