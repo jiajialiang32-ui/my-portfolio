@@ -99,10 +99,17 @@ let isAudioInitialized = false;
 // Function to unlock the audio context on the first user gesture
 function initAudio() {
     if (isAudioInitialized) return;
+
+    const resumeContextAndPlayMusic = () => {
+        isAudioInitialized = true;
+        playBgMusic();
+    };
+
     if (audioContext.state === 'suspended') {
-        audioContext.resume();
+        audioContext.resume().then(resumeContextAndPlayMusic).catch(e => console.error("AudioContext resume failed", e));
+    } else {
+        resumeContextAndPlayMusic();
     }
-    isAudioInitialized = true;
 }
 
 const audioFiles = {
@@ -130,6 +137,21 @@ function playEffectSound(key) {
     source.buffer = audioBuffers[key];
     source.connect(audioContext.destination);
     source.start(0);
+}
+
+// ==========================================
+// Background Music Logic
+// ==========================================
+let bgMusicSource = null;
+let isMusicEnabled = true;
+
+function playBgMusic() {
+    if (!isAudioInitialized || !isMusicEnabled || bgMusicSource || !audioBuffers.bgMusic) return;
+    bgMusicSource = audioContext.createBufferSource();
+    bgMusicSource.buffer = audioBuffers.bgMusic;
+    bgMusicSource.loop = true;
+    bgMusicSource.connect(audioContext.destination);
+    bgMusicSource.start(0);
 }
 
 // ==========================================
@@ -308,6 +330,7 @@ function bindJoystick() {
     };
 
     const start = (e) => {
+        initAudio(); // Ensure audio context is resumed on first joystick interaction
         e.preventDefault();
         if (active) return;
         active = true;
@@ -1106,25 +1129,8 @@ document.getElementById('modal-close').addEventListener('click', closeModal);
 // ==========================================
 // 7. 背景音乐交互播放逻辑
 // ==========================================
-let bgMusicSource = null;
-let isMusicEnabled = true;
-
-function playBgMusic() {
-    if (!isAudioInitialized) initAudio();
-    if (isMusicEnabled && !bgMusicSource && audioBuffers.bgMusic) {
-        bgMusicSource = audioContext.createBufferSource();
-        bgMusicSource.buffer = audioBuffers.bgMusic;
-        bgMusicSource.loop = true;
-        bgMusicSource.connect(audioContext.destination);
-        bgMusicSource.start(0);
-    }
-}
-
-// 任意键盘或点击都会触发背景音乐
-window.addEventListener('keydown', playBgMusic, { once: true });
-window.addEventListener('click', playBgMusic, { once: true });
-window.addEventListener('touchstart', playBgMusic, { once: true });
-
+// This section is now handled by the consolidated audio logic
+// at the top of the script and the new initAudio function.
 window.addEventListener('keydown', initAudio, { once: true });
 window.addEventListener('click', initAudio, { once: true });
 window.addEventListener('touchstart', initAudio, { once: true });
@@ -1276,7 +1282,13 @@ function loadNonCriticalAssets() {
         tabSwitch: 'assets/Free pack/lolurio Free Cozy Game UI SFX Pack/WAV/UI SFX_MENU_Hover.wav',
         letterOpen: 'assets/Free pack/lolurio Free Cozy Game UI SFX Pack/WAV/UI SFX_InGameMenu_Load.wav'
     };
-    loadSpecificAudio(nonCriticalAudioFiles);
+    const audioPromises = loadSpecificAudio(nonCriticalAudioFiles);
+    Promise.all(audioPromises).then(() => {
+        // Only play music automatically if the user has already interacted with the site.
+        if (isAudioInitialized) {
+            playBgMusic();
+        }
+    });
 }
 
 checkCriticalAssetsReady();
