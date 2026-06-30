@@ -488,7 +488,7 @@ function update() {
     }
 
     const promptEl = document.getElementById('interaction-prompt');
-    if (hasUserInteracted && nearObject) { // Removed the condition nearObject.id !== 'orange-cat'
+    if (nearObject) {
         let promptText = '';
         let addBouncingClass = false;
 
