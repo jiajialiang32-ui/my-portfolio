@@ -986,7 +986,7 @@ function renderOrangeCatModal() {
             const randomTranslateX = Math.random() * 40 - 20; // -20 to 20 px
             const randomTranslateY = Math.random() * 40 - 20; // -20 to 20 px
             card.style.transform = `translate(${randomTranslateX}px, ${randomTranslateY}px) rotate(${randomRotate}deg)`;
-            card.style.zIndex = index;
+            card.style.zIndex = photobookData.length - 1 - index;
         });
         nextButton.style.display = 'inline-block';
     }
@@ -1009,7 +1009,7 @@ function renderOrangeCatModal() {
             const randomTranslateX = Math.random() * 40 - 20;
             const randomTranslateY = Math.random() * 40 - 20;
             card.style.transform = `translate(${randomTranslateX}px, ${randomTranslateY}px) rotate(${randomRotate}deg)`;
-            card.style.zIndex = index;
+            card.style.zIndex = animalData.length - 1 - index;
         });
         nextButton.style.display = 'inline-block';
     }
@@ -1031,7 +1031,7 @@ function renderOrangeCatModal() {
             const randomTranslateX = Math.random() * 40 - 20;
             const randomTranslateY = Math.random() * 40 - 20;
             card.style.transform = `translate(${randomTranslateX}px, ${randomTranslateY}px) rotate(${randomRotate}deg)`;
-            card.style.zIndex = index;
+            card.style.zIndex = makaylaData.length - 1 - index;
         });
         nextButton.style.display = 'inline-block';
     }

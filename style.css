@@ -237,14 +237,6 @@ canvas, img {
         -webkit-overflow-scrolling: touch;
     }
 
-    #modal-overlay[data-current-modal="wish"] {
-        align-items: center; /* Override items-start for wish modal */
-    }
-
-    #modal-overlay[data-current-modal="wish"] #modal-content {
-        margin-top: 0; /* Remove mt-16 for wish modal */
-    }
-
     #start-btn {
         font-size: 1.5rem; /* Larger font size for mobile ENTER button */
         padding: 1rem 2rem; /* Larger padding for mobile ENTER button */
