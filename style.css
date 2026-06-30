@@ -1,3 +1,12 @@
+body {
+    cursor: url('assets/Free pack/winter full/未命名作品-1 2.png'), auto;
+}
+
+/* Ensure all interactive elements also use the custom cursor */
+a, button, input, textarea, select, [role="button"], [role="link"], [role="option"] {
+    cursor: url('assets/Free pack/winter full/未命名作品-1 2.png'), auto !important;
+}
+
 /* 引入手写字体 */
 @font-face {
     font-family: 'Myfont';
@@ -72,7 +81,7 @@ canvas, img {
     position: relative;
     top: 0;
     transition: all 0.1s;
-    cursor: pointer;
+    cursor: url('assets/Free pack/winter full/未命名作品-1 2.png'), auto;
 }
 
 .stardew-tab-btn:hover {
@@ -99,7 +108,7 @@ canvas, img {
     box-shadow: inset -2px -2px 0px #b5834b, inset 2px 2px 0px #fffdf9;
     padding: 12px 14px;
     text-align: left;
-    cursor: pointer;
+    cursor: url('assets/Free pack/winter full/未命名作品-1 2.png'), auto;
     transition: transform 0.15s ease, background-color 0.15s ease;
     color: #421f06;
     font-size: 1.25rem;
@@ -155,7 +164,7 @@ canvas, img {
     padding: 8px 10px;
     text-align: left;
     font-size: 1.1rem;
-    cursor: pointer;
+    cursor: url('assets/Free pack/winter full/未命名作品-1 2.png'), auto;
 }
 
 .sound-option-btn.active {
@@ -269,7 +278,7 @@ canvas, img {
     box-shadow: inset -2px -2px 0px #b5834b, inset 2px 2px 0px #fffdf9;
     padding: 10px 16px;
     text-align: center;
-    cursor: pointer;
+    cursor: url('assets/Free pack/winter full/未命名作品-1 2.png'), auto;
     color: #421f06;
     font-size: 1.25rem;
     margin-right: 4px;
