@@ -317,3 +317,12 @@ canvas, img {
 .bouncing-prompt {
     animation: bounce 1s infinite;
 }
+
+#loading-screen {
+    transition: opacity 0.5s ease-out, visibility 0.5s ease-out;
+}
+
+#loading-screen.fade-out {
+    opacity: 0;
+    visibility: hidden;
+}

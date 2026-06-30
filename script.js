@@ -125,14 +125,17 @@ function loadAudio(url) {
 }
 
 function loadAllAudio() {
+    const promises = [];
     for (const key in audioFiles) {
-        loadAudio(audioFiles[key]).then(buffer => {
+        const promise = loadAudio(audioFiles[key]).then(buffer => {
             audioBuffers[key] = buffer;
         }).catch(error => console.error(`Failed to load audio: ${key}`, error));
+        promises.push(promise);
     }
+    return promises;
 }
 
-loadAllAudio();
+const audioLoadPromises = loadAllAudio();
 
 function playEffectSound(key) {
     if (!isAudioInitialized || !isEffectEnabled || !audioBuffers[key]) return;
@@ -1205,4 +1208,43 @@ if (effectToggleBtn) {
     });
 }
 
-updateSoundUI(); 
+updateSoundUI();
+
+// ==========================================
+// 9. Lazy Loading Logic
+// ==========================================
+const loadingScreen = document.getElementById('loading-screen');
+const imageAssets = [
+    ...imgBg, imgIsland, imgSnowSheet, imgHeroIdle, imgHeroWalk, imgAbout, imgSkills,
+    imgProj, imgContact, imgLightTree, imgLightReindeer, imgSideTreeLeft,
+    imgSideTreeRight, imgSideTreeFarRight, imgProjTreeLeft, imgProjTreeRight,
+    imgContactTreeLeft, imgContactTreeRight, imgSnowFill, imgStreetlight,
+    ...imgSnowAnim, imgWish, imgFruit, imgCoin, imgOrangeCat
+];
+
+function checkAssetsReady() {
+    const imagePromises = imageAssets.map(img => {
+        return new Promise((resolve) => {
+            if (img.complete) {
+                resolve();
+            } else {
+                img.onload = resolve;
+                img.onerror = resolve; // Resolve even on error to not block loading
+            }
+        });
+    });
+
+    Promise.all([...imagePromises, ...audioLoadPromises]).then(() => {
+        if (loadingScreen) {
+            loadingScreen.classList.add('fade-out');
+        }
+    }).catch(error => {
+        console.error("Error loading assets:", error);
+        if (loadingScreen) {
+            loadingScreen.classList.add('fade-out'); // Hide loading screen even if some assets fail
+        }
+    });
+}
+
+checkAssetsReady();
+ 
