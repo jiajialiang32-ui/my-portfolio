@@ -89,19 +89,58 @@ imgCoin.src = 'assets/Free pack/coin4_16x16.png';
 const imgOrangeCat = new Image();
 imgOrangeCat.src = 'assets/Free pack/Free pack 2/cat 1.6.png';
 
-const coinSound = new Audio('assets/Free pack/Confirm 1.wav');
-coinSound.preload = 'auto';
-const meowSound = new Audio('assets/Free pack/Cat_Meow.wav');
-meowSound.preload = 'auto';
-const bubbleSound = new Audio('assets/Free pack/Bubble 1.wav');
-bubbleSound.preload = 'auto';
-const confirmSound = new Audio('assets/Free pack/lolurio Free Cozy Game UI SFX Pack/WAV/UI SFX_FEEDBACK_Woom.wav');
-confirmSound.preload = 'auto';
-const wishOpenSound = new Audio('assets/Free pack/lolurio Free Cozy Game UI SFX Pack/WAV/UI SFX_InGameMenu_Open.wav');
-wishOpenSound.preload = 'auto';
+// ==========================================
+// NEW: Web Audio API Setup
+// ==========================================
+const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+const audioBuffers = {};
+let isAudioInitialized = false;
 
-const orangeCatSound = new Audio('assets/Free pack/stu9-cute-cat-352656.mp3');
-orangeCatSound.preload = 'auto';
+// Function to unlock the audio context on the first user gesture
+function initAudio() {
+    if (isAudioInitialized) return;
+    if (audioContext.state === 'suspended') {
+        audioContext.resume();
+    }
+    isAudioInitialized = true;
+}
+
+const audioFiles = {
+    coin: 'assets/Free pack/Confirm 1.wav',
+    meow: 'assets/Free pack/Cat_Meow.wav',
+    bubble: 'assets/Free pack/Bubble 1.wav',
+    confirm: 'assets/Free pack/lolurio Free Cozy Game UI SFX Pack/WAV/UI SFX_FEEDBACK_Woom.wav',
+    wishOpen: 'assets/Free pack/lolurio Free Cozy Game UI SFX Pack/WAV/UI SFX_InGameMenu_Open.wav',
+    orangeCat: 'assets/Free pack/stu9-cute-cat-352656.mp3',
+    bgMusic: 'assets/Free pack/Cute Bossa Nova.wav',
+    projectSelect: 'assets/Free pack/lolurio Free Cozy Game UI SFX Pack/WAV/UI SFX_FEEDBACK_Woop.wav',
+    tabSwitch: 'assets/Free pack/lolurio Free Cozy Game UI SFX Pack/WAV/UI SFX_MENU_Hover.wav',
+    letterOpen: 'assets/Free pack/lolurio Free Cozy Game UI SFX Pack/WAV/UI SFX_InGameMenu_Load.wav'
+};
+
+function loadAudio(url) {
+    return fetch(url)
+        .then(response => response.arrayBuffer())
+        .then(arrayBuffer => audioContext.decodeAudioData(arrayBuffer));
+}
+
+function loadAllAudio() {
+    for (const key in audioFiles) {
+        loadAudio(audioFiles[key]).then(buffer => {
+            audioBuffers[key] = buffer;
+        }).catch(error => console.error(`Failed to load audio: ${key}`, error));
+    }
+}
+
+loadAllAudio();
+
+function playEffectSound(key) {
+    if (!isAudioInitialized || !isEffectEnabled || !audioBuffers[key]) return;
+    const source = audioContext.createBufferSource();
+    source.buffer = audioBuffers[key];
+    source.connect(audioContext.destination);
+    source.start(0);
+}
 
 // ==========================================
 // 2. 全局状态与玩家配置
@@ -208,7 +247,7 @@ function openNearbyObject() {
     if (nearObject.id === 'wish') {
         const allCoinsCollected = interactiveObjects.filter(obj => obj.type === 'coin').every(obj => obj.collected);
         if (allCoinsCollected) {
-            playEffectSound(wishOpenSound);
+            playEffectSound('wishOpen');
             
             const wishMessages = [
                 "The wishing well has sensed your coin. It wants to whisper to you: You've been doing so well lately. Make sure to treat yourself to a delicious drink today.",
@@ -226,7 +265,7 @@ function openNearbyObject() {
             return true;
         }
     } else if (nearObject.id) {
-        playEffectSound(bubbleSound);
+        playEffectSound('bubble');
         openModal(nearObject.id);
         return true;
     }
@@ -418,9 +457,9 @@ function update() {
         if (dist < 60) {
             if (obj.type === 'coin') {
                 obj.collected = true; // 玩家碰到金币，标记为收集
-                playEffectSound(coinSound.cloneNode(true));
+                playEffectSound('coin');
             } else if (obj.id === 'orange-cat' && !obj.soundPlayed) {
-                playEffectSound(meowSound.cloneNode(true));
+                playEffectSound('meow');
                 obj.soundPlayed = true;
             } else if (obj.id) {
                 nearObject = obj; // 只对有 id 的物体显示交互提示
@@ -889,8 +928,7 @@ function renderProjectsModal() {
     projectButtons.forEach(button => {
         button.addEventListener('click', () => {
             showProject(button.dataset.project);
-            const projectSelectSound = new Audio('assets/Free pack/lolurio Free Cozy Game UI SFX Pack/WAV/UI SFX_FEEDBACK_Woop.wav');
-            playEffectSound(projectSelectSound);
+            playEffectSound('projectSelect');
         });
     });
 
@@ -986,8 +1024,7 @@ function renderOrangeCatModal() {
 
     tabButtons.forEach(button => {
         button.addEventListener('click', () => {
-            const tabSwitchSound = new Audio('assets/Free pack/lolurio Free Cozy Game UI SFX Pack/WAV/UI SFX_FEEDBACK_Woop.wav');
-            playEffectSound(tabSwitchSound);
+            playEffectSound('tabSwitch');
 
             const tab = button.dataset.tab;
 
@@ -1020,7 +1057,7 @@ function renderOrangeCatModal() {
                 makaylaData.push(makaylaData.shift());
                 renderMakaylaTab();
             }
-            playEffectSound(new Audio('assets/Free pack/lolurio Free Cozy Game UI SFX Pack/WAV/UI SFX_MENU_Hover.wav'));
+            playEffectSound('tabSwitch');
         });
     }
 }
@@ -1043,7 +1080,7 @@ function openModal(id) {
     }
 }
 function closeModal() {
-    playEffectSound(confirmSound);
+    playEffectSound('confirm');
     overlay.classList.remove('active');
 }
 
@@ -1057,8 +1094,7 @@ overlay.addEventListener('transitionend', (e) => {
                 overlay.dataset.currentModal = 'letter';
                 // 替换为直接设置内容，因为 typeWriter 函数未定义
                 body.innerHTML = modalData.letter;
-                const letterOpenSound = new Audio('assets/Free pack/lolurio Free Cozy Game UI SFX Pack/WAV/UI SFX_InGameMenu_Load.wav');
-                playEffectSound(letterOpenSound);
+                playEffectSound('letterOpen');
             }, 300);
         } else {
             overlay.style.display = 'none';
@@ -1080,22 +1116,29 @@ document.getElementById('modal-close').addEventListener('click', closeModal);
 // ==========================================
 // 7. 背景音乐交互播放逻辑
 // ==========================================
-let bgMusicPlayed = false;
-const bgMusic = document.getElementById('bg-music');
+let bgMusicSource = null;
 let isMusicEnabled = true;
-let isEffectEnabled = true;
 
 function playBgMusic() {
-    if (!bgMusicPlayed && isMusicEnabled && bgMusic) {
-        bgMusic.play().catch(err => console.log("Audio autoplay prevented:", err));
-        bgMusicPlayed = true;
+    if (!isAudioInitialized) initAudio();
+    if (isMusicEnabled && !bgMusicSource && audioBuffers.bgMusic) {
+        bgMusicSource = audioContext.createBufferSource();
+        bgMusicSource.buffer = audioBuffers.bgMusic;
+        bgMusicSource.loop = true;
+        bgMusicSource.connect(audioContext.destination);
+        bgMusicSource.start(0);
     }
 }
 
 // 任意键盘或点击都会触发背景音乐
-window.addEventListener('keydown', playBgMusic);
-window.addEventListener('click', playBgMusic);
-window.addEventListener('touchstart', playBgMusic);
+window.addEventListener('keydown', playBgMusic, { once: true });
+window.addEventListener('click', playBgMusic, { once: true });
+window.addEventListener('touchstart', playBgMusic, { once: true });
+
+window.addEventListener('keydown', initAudio, { once: true });
+window.addEventListener('click', initAudio, { once: true });
+window.addEventListener('touchstart', initAudio, { once: true });
+
 
 // ==========================================
 // 8. 声音控制菜单逻辑
@@ -1104,7 +1147,7 @@ const soundBtn = document.getElementById('sound-btn');
 const soundMenu = document.getElementById('sound-menu');
 const musicToggleBtn = document.getElementById('music-toggle');
 const effectToggleBtn = document.getElementById('effect-toggle');
-const effectSounds = [coinSound, meowSound, bubbleSound, confirmSound, wishOpenSound, orangeCatSound];
+let isEffectEnabled = true;
 
 function updateSoundUI() {
     if (musicToggleBtn) {
@@ -1119,13 +1162,12 @@ function updateSoundUI() {
 
 function setMusicEnabled(enabled) {
     isMusicEnabled = enabled;
-    if (bgMusic) {
-        if (enabled) {
-            if (bgMusicPlayed) {
-                bgMusic.play().catch(err => console.log("Audio play prevented:", err));
-            }
-        } else {
-            bgMusic.pause();
+    if (enabled) {
+        playBgMusic();
+    } else {
+        if (bgMusicSource) {
+            bgMusicSource.stop();
+            bgMusicSource = null;
         }
     }
     updateSoundUI();
@@ -1133,26 +1175,10 @@ function setMusicEnabled(enabled) {
 
 function setEffectEnabled(enabled) {
     isEffectEnabled = enabled;
-    effectSounds.forEach(audio => {
-        if (audio) {
-            audio.muted = !enabled;
-        }
-    });
     updateSoundUI();
 }
 
-function playEffectSound(audio) {
-    if (!audio || !isEffectEnabled) return;
-    try {
-        audio.currentTime = 0;
-        const playPromise = audio.play();
-        if (playPromise && typeof playPromise.catch === 'function') {
-            playPromise.catch(() => {});
-        }
-    } catch (error) {
-        console.warn('Effect sound play failed:', error);
-    }
-}
+
 
 if (soundBtn && soundMenu) {
     soundBtn.addEventListener('click', (e) => {
