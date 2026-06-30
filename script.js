@@ -124,19 +124,6 @@ function loadAudio(url) {
         .then(arrayBuffer => audioContext.decodeAudioData(arrayBuffer));
 }
 
-function loadAllAudio() {
-    const promises = [];
-    for (const key in audioFiles) {
-        const promise = loadAudio(audioFiles[key]).then(buffer => {
-            audioBuffers[key] = buffer;
-        }).catch(error => console.error(`Failed to load audio: ${key}`, error));
-        promises.push(promise);
-    }
-    return promises;
-}
-
-const audioLoadPromises = loadAllAudio();
-
 function playEffectSound(key) {
     if (!isAudioInitialized || !isEffectEnabled || !audioBuffers[key]) return;
     const source = audioContext.createBufferSource();
@@ -1214,16 +1201,32 @@ updateSoundUI();
 // 9. Lazy Loading Logic
 // ==========================================
 const loadingScreen = document.getElementById('loading-screen');
-const imageAssets = [
-    ...imgBg, imgIsland, imgSnowSheet, imgHeroIdle, imgHeroWalk, imgAbout, imgSkills,
-    imgProj, imgContact, imgLightTree, imgLightReindeer, imgSideTreeLeft,
-    imgSideTreeRight, imgSideTreeFarRight, imgProjTreeLeft, imgProjTreeRight,
-    imgContactTreeLeft, imgContactTreeRight, imgSnowFill, imgStreetlight,
-    ...imgSnowAnim, imgWish, imgFruit, imgCoin, imgOrangeCat
+
+const criticalImageAssets = [
+    ...imgBg, imgIsland, imgHeroIdle, imgHeroWalk, imgAbout, imgWish, imgLightTree, imgLightReindeer
 ];
 
-function checkAssetsReady() {
-    const imagePromises = imageAssets.map(img => {
+const criticalAudioFiles = {
+    coin: 'assets/Free pack/Confirm 1.wav',
+    meow: 'assets/Free pack/Cat_Meow.wav',
+    bubble: 'assets/Free pack/Bubble 1.wav',
+    confirm: 'assets/Free pack/lolurio Free Cozy Game UI SFX Pack/WAV/UI SFX_FEEDBACK_Woom.wav',
+    wishOpen: 'assets/Free pack/lolurio Free Cozy Game UI SFX Pack/WAV/UI SFX_InGameMenu_Open.wav',
+};
+
+function loadSpecificAudio(files) {
+    const promises = [];
+    for (const key in files) {
+        const promise = loadAudio(files[key]).then(buffer => {
+            audioBuffers[key] = buffer;
+        }).catch(error => console.error(`Failed to load audio: ${key}`, error));
+        promises.push(promise);
+    }
+    return promises;
+}
+
+function checkCriticalAssetsReady() {
+    const imagePromises = criticalImageAssets.map(img => {
         return new Promise((resolve) => {
             if (img.complete) {
                 resolve();
@@ -1234,17 +1237,47 @@ function checkAssetsReady() {
         });
     });
 
-    Promise.all([...imagePromises, ...audioLoadPromises]).then(() => {
+    const audioPromises = loadSpecificAudio(criticalAudioFiles);
+
+    Promise.all([...imagePromises, ...audioPromises]).then(() => {
         if (loadingScreen) {
             loadingScreen.classList.add('fade-out');
         }
+        // Now load the non-critical assets in the background
+        loadNonCriticalAssets();
     }).catch(error => {
-        console.error("Error loading assets:", error);
+        console.error("Error loading critical assets:", error);
         if (loadingScreen) {
             loadingScreen.classList.add('fade-out'); // Hide loading screen even if some assets fail
         }
+        loadNonCriticalAssets(); // Still try to load non-critical assets
     });
 }
 
-checkAssetsReady();
+function loadNonCriticalAssets() {
+    // Load non-critical images
+    const nonCriticalImageAssets = [
+        imgSkills, imgProj, imgContact, imgSideTreeLeft,
+        imgSideTreeRight, imgSideTreeFarRight, imgProjTreeLeft, imgProjTreeRight,
+        imgContactTreeLeft, imgContactTreeRight, imgSnowFill, imgStreetlight,
+        ...imgSnowAnim, imgFruit, imgCoin, imgOrangeCat
+    ];
+    nonCriticalImageAssets.forEach(img => {
+        if (!img.src) return; // Skip if no src is set
+        const tempImg = new Image();
+        tempImg.src = img.src;
+    });
+
+    // Load non-critical audio
+    const nonCriticalAudioFiles = {
+        orangeCat: 'assets/Free pack/stu9-cute-cat-352656.mp3',
+        bgMusic: 'assets/Free pack/Cute Bossa Nova.wav',
+        projectSelect: 'assets/Free pack/lolurio Free Cozy Game UI SFX Pack/WAV/UI SFX_FEEDBACK_Woop.wav',
+        tabSwitch: 'assets/Free pack/lolurio Free Cozy Game UI SFX Pack/WAV/UI SFX_MENU_Hover.wav',
+        letterOpen: 'assets/Free pack/lolurio Free Cozy Game UI SFX Pack/WAV/UI SFX_InGameMenu_Load.wav'
+    };
+    loadSpecificAudio(nonCriticalAudioFiles);
+}
+
+checkCriticalAssetsReady();
  
