@@ -236,6 +236,14 @@ canvas, img {
         overflow-y: auto;
         -webkit-overflow-scrolling: touch;
     }
+
+    #modal-overlay[data-current-modal="wish"] {
+        align-items: center; /* Override items-start for wish modal */
+    }
+
+    #modal-overlay[data-current-modal="wish"] #modal-content {
+        margin-top: 0; /* Remove mt-16 for wish modal */
+    }
 }
 
 @media (min-width: 769px) {

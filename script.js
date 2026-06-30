@@ -285,20 +285,7 @@ function openNearbyObject() {
     return false;
 }
 
-window.addEventListener('pointerdown', (e) => {
-    const overlay = document.getElementById('modal-overlay');
-    if (overlay.classList.contains('active')) return;
 
-    // Ignore taps on the header to prevent conflict with header buttons
-    const header = document.querySelector('header');
-    if (e.target instanceof Element && header.contains(e.target)) return;
-    
-    if (!isMobileViewport() || !nearObject || e.pointerType !== 'touch') return;
-    if (e.target instanceof Element && e.target.closest('#joystick-base')) return;
-
-    e.preventDefault();
-    openNearbyObject();
-}, { passive: false });
 
 function resetJoystick() {
     if (!joystickKnob) return;
@@ -597,7 +584,14 @@ function draw() {
         ctx.save();
         ctx.rotate(obj.angle);
         const isMobile = window.innerWidth <= 768;
-        const mobileScale = isMobile && obj.type !== 'coin' ? 0.8 : 1;
+        let mobileScale = 1;
+        if (isMobile) {
+            if (obj.id === 'orange-cat') { // Specific scaling for orange cat on mobile
+                mobileScale = 1; // Make it the same size as the player character (1:1 scale)
+            } else if (obj.type !== 'coin') { // Existing logic for other non-coin objects
+                mobileScale = 0.8;
+            }
+        }
         const drawW = obj.w * mobileScale;
         const drawH = obj.h * mobileScale;
         const y_offset = (obj.y_offset || 0) + 5;
@@ -707,6 +701,13 @@ function draw() {
     }
     ctx.restore();
 }
+
+// Make the interaction prompt itself clickable on mobile
+document.getElementById('interaction-prompt').addEventListener('click', () => {
+    if (nearObject) {
+        openNearbyObject();
+    }
+});
 
 // 驱动循环驱动器
 function gameLoop() {
