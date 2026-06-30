@@ -1204,9 +1204,22 @@ if (effectToggleBtn) {
 updateSoundUI();
 
 // ==========================================
-// 9. Lazy Loading Logic
+// 9. Lazy Loading & Start Screen Logic
 // ==========================================
 const loadingScreen = document.getElementById('loading-screen');
+const startScreen = document.getElementById('start-screen');
+const startBtn = document.getElementById('start-btn');
+
+// Listener for the main start button
+startBtn.addEventListener('click', () => {
+    initAudio(); // Initialize audio context and play music
+    startScreen.style.display = 'none'; // Hide the start screen
+    
+    // Now that the user has interacted and the main experience has begun,
+    // load the non-critical assets in the background.
+    loadNonCriticalAssets();
+}, { once: true });
+
 
 const criticalImageAssets = [
     ...imgBg, imgIsland, imgHeroIdle, imgHeroWalk, imgAbout, imgWish, imgLightTree, imgLightReindeer
@@ -1218,6 +1231,7 @@ const criticalAudioFiles = {
     bubble: 'assets/Free pack/Bubble 1.wav',
     confirm: 'assets/Free pack/lolurio Free Cozy Game UI SFX Pack/WAV/UI SFX_FEEDBACK_Woom.wav',
     wishOpen: 'assets/Free pack/lolurio Free Cozy Game UI SFX Pack/WAV/UI SFX_InGameMenu_Open.wav',
+    bgMusic: 'assets/Free pack/Week 26 - Seaside CORAL REEF.ogg', // Move bgMusic to critical assets
 };
 
 function loadSpecificAudio(files) {
@@ -1245,18 +1259,17 @@ function checkCriticalAssetsReady() {
 
     const audioPromises = loadSpecificAudio(criticalAudioFiles);
 
-    Promise.all([...imagePromises, ...audioPromises]).then(() => {
-        if (loadingScreen) {
-            loadingScreen.classList.add('fade-out');
-        }
-        // Now load the non-critical assets in the background
-        loadNonCriticalAssets();
+    Promise.all([...imagePromises, ...Object.values(audioPromises)]).then(() => {
+        // Critical assets are loaded, hide loading screen and show start screen
+        loadingScreen.style.display = 'none';
+        startScreen.classList.remove('hidden');
+        startScreen.style.display = 'flex';
     }).catch(error => {
         console.error("Error loading critical assets:", error);
-        if (loadingScreen) {
-            loadingScreen.classList.add('fade-out'); // Hide loading screen even if some assets fail
-        }
-        loadNonCriticalAssets(); // Still try to load non-critical assets
+        // Even if assets fail, hide loading and show start screen to not get stuck
+        loadingScreen.style.display = 'none';
+        startScreen.classList.remove('hidden');
+        startScreen.style.display = 'flex';
     });
 }
 
@@ -1277,18 +1290,13 @@ function loadNonCriticalAssets() {
     // Load non-critical audio
     const nonCriticalAudioFiles = {
         orangeCat: 'assets/Free pack/stu9-cute-cat-352656.mp3',
-        bgMusic: 'assets/Free pack/Cute Bossa Nova.wav',
         projectSelect: 'assets/Free pack/lolurio Free Cozy Game UI SFX Pack/WAV/UI SFX_FEEDBACK_Woop.wav',
         tabSwitch: 'assets/Free pack/lolurio Free Cozy Game UI SFX Pack/WAV/UI SFX_MENU_Hover.wav',
         letterOpen: 'assets/Free pack/lolurio Free Cozy Game UI SFX Pack/WAV/UI SFX_InGameMenu_Load.wav'
     };
-    const audioPromises = loadSpecificAudio(nonCriticalAudioFiles);
-    Promise.all(audioPromises).then(() => {
-        // Only play music automatically if the user has already interacted with the site.
-        if (isAudioInitialized) {
-            playBgMusic();
-        }
-    });
+    
+    // No need to call playBgMusic here anymore, it's handled by the start button.
+    loadSpecificAudio(nonCriticalAudioFiles);
 }
 
 checkCriticalAssetsReady();
