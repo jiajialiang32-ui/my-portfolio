@@ -346,7 +346,12 @@ function bindJoystick() {
     window.addEventListener('pointercancel', end);
 }
 
-bindJoystick();
+// Conditionally bind joystick only on touch devices
+if ('ontouchstart' in window || navigator.maxTouchPoints > 0) {
+    bindJoystick();
+} else {
+    if (joystickBase) joystickBase.style.display = 'none';
+}
 
 // ==========================================
 // 4.5 粒子系统

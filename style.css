@@ -22,26 +22,32 @@ canvas, img {
 }
 
 .joystick-base {
-    width: 74px;
-    height: 74px;
-    border-radius: 999px;
-    border: 3px solid #5c2e0b;
-    background: rgba(243, 217, 164, 0.75);
-    box-shadow: inset -2px -2px 0 #b5834b, inset 2px 2px 0 #fffdf9;
+    width: 180px; /* Further increased size */
+    height: 180px; /* Further increased size */
+    border-radius: 50%;
+    background: rgba(194, 181, 155, 0.2); /* More transparent base */
+    backdrop-filter: blur(8px); /* Frosted glass effect */
+    -webkit-backdrop-filter: blur(8px); /* For Safari support */
+    border: 2px solid #FFFACD; /* Light yellow border */
+    /* No box-shadow for a flat design */
     position: relative;
     touch-action: none;
+    overflow: hidden;
 }
 
+
+
 .joystick-knob {
-    width: 34px;
-    height: 34px;
-    border-radius: 999px;
-    background: #9c2a2a;
-    border: 3px solid #421f06;
+    width: 100px; /* Doubled size */
+    height: 100px; /* Doubled size */
+    border-radius: 50%;
+    background: #FFFACD; /* Light yellow for the knob */
+    border: 1px solid #FFFACD; /* Simple border matching knob color */
     position: absolute;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
+    /* No box-shadow for a flat design */
     transition: transform 0.08s ease;
 }
 
@@ -210,13 +216,13 @@ canvas, img {
     }
 
     .joystick-base {
-        width: 58px;
-        height: 58px;
+        width: 105px;
+        height: 105px;
     }
 
     .joystick-knob {
-        width: 26px;
-        height: 26px;
+        width: 64px;
+        height: 64px;
     }
 
     #interactive-mode {
@@ -237,17 +243,18 @@ canvas, img {
         -webkit-overflow-scrolling: touch;
     }
 
+    #modal-body > *:first-child {
+        margin-top: 0;
+        padding-top: 0;
+    }
+
     #start-btn {
         font-size: 1.5rem; /* Larger font size for mobile ENTER button */
         padding: 1rem 2rem; /* Larger padding for mobile ENTER button */
     }
 }
 
-@media (min-width: 769px) {
-    .joystick-base {
-        display: none;
-    }
-}
+
 
 @media (orientation: landscape) and (max-height: 500px) {
     #gameCanvas {
