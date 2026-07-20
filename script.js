@@ -731,7 +731,7 @@ const projectData = [
         id: 'roi-analysis',
         title: 'North American Social Media Marketing ROI Optimization & Predictive Simulation',
         description: 'This project analyzes a synthetic marketing dataset for a Canadian FMCG brand and evaluates how budget shifts could improve ROI for the 18–25 female audience. It combines Python-based simulation, SQL-style aggregation, and a Power BI dashboard into a compact portfolio project.',
-        skills: ['Python: pandas, numpy, matplotlib, pandasql', 'Notebook: Jupyter / ipykernel', 'Visualization: Power BI'],
+        skills: ['Python: pandas, numpy, matplotlib, pandasql', 'Notebook: Jupyter / ipykernel', 'Visualization: Power BI',"SQL","Data Analysis"],
         highlights: 'The project explores how smarter budget allocation and audience targeting can improve campaign efficiency and expected returns.',
         githubUrl: 'https://github.com/jiajialiang32-ui/roi-project'
     },
@@ -739,7 +739,7 @@ const projectData = [
         id: 'subscription-testing',
         title: 'FinTech Subscription Optimization via A/B Testing',
         description: 'This project evaluates the behavioral and financial impact of an optimized pricing page interface for a FinTech platform. Using a reproducible data pipeline, the analysis simulates user behavior, validates assumptions, performs statistical testing, and translates results into a revenue projection.',
-        skills: ['Python 3', 'NumPy', 'Pandas', 'Seaborn', 'Matplotlib', 'Statsmodels', 'Jupyter Notebook'],
+        skills: ['Python: pandas, numpy, matplotlib, seaborn', 'Statsmodels', 'Jupyter Notebook'],
         highlights: 'The project combines statistical analysis with business impact modeling to assess pricing-page changes and forecast revenue outcomes.',
         githubUrl: 'https://github.com/jiajialiang32-ui/ABtesting'
     },
@@ -747,7 +747,7 @@ const projectData = [
         id: 'portfolio-site',
         title: 'Interactive Portfolio Website',
         description: 'This portfolio website turns my background and projects into an interactive experience inspired by a cozy pixel-style farm world.',
-        skills: ['HTML', 'CSS', 'JavaScript', 'UI Design'],
+        skills: ['HTML', 'CSS', 'JavaScript', 'UI Design','Game Development'],
         highlights: 'The goal was to make complex information easy to explore while keeping the experience engaging.'
     },
     {
@@ -878,9 +878,19 @@ const makaylaData = [
 
 const modalData = {
     about: `<h2 class="text-4xl font-bold text-[#9e331f] mb-3">ABOUT ME 📬</h2><p class="text-xl">Dedicated BBA & Mathematics double degree student at Wilfrid Laurier University and University of Waterloo, currently in my second year. I possess a strong foundation in quantitative analysis, Python programming, and strategic business frameworks, developed through systematic study of live case studies, economics, and advanced mathematics. Currently expanding my expertise in accounting, optimization theory, and statistics, while proactively mastering additional business skills independently. I am eager to leverage my interdisciplinary background to contribute to high-impact projects in Data & Analytics, Finance, Consulting, and Product Growth.</p>`,
-    skills: `<h2 class="text-4xl font-bold text-[#3a5f25] mb-3">SKILLS TREE 🌲</h2><p class="text-xl">💻 Data Analytics & Programming: Python (Pandas, NumPy, Matplotlib), SQL</p>
-                                                                                    <p class="text-xl">📊 Business Intelligence & Automation: Power BI, Microsoft Excel (VBA)</p>
-                                                                                    <p class="text-xl">🧠 Core Competencies: Critical Thinking, Data-Driven Problem Solving, Quantitative Analysis</p>`,
+    skills: `<h2 class="text-4xl font-bold text-[#3a5f25] mb-3">SKILLS TREE 🌲</h2>
+        <p class="text-xl font-bold">Web Development & Design:</p>
+        <p class="text-xl ml-4">- HTML5, CSS3 (Responsive Design, Animations), JavaScript (ES6+)</p>
+        <p class="text-xl ml-4">- Interactive Design: HTML5 Canvas, Web Audio API</p>
+        <p class="text-xl ml-4">- UI/UX: Tailwind CSS, Pixel-Art Aesthetics, Mobile-First Design</p>
+        <p class="text-xl font-bold mt-4">Data Analytics & Programming:</p>
+        <p class="text-xl ml-4">- Python (Pandas, NumPy, Matplotlib), SQL</p>
+        <p class="text-xl font-bold mt-4">Business Intelligence & Automation:</p>
+        <p class="text-xl ml-4">- Power BI, Microsoft Excel (VBA)</p>
+        <p class="text-xl font-bold mt-4">General Software Engineering:</p>
+        <p class="text-xl ml-4">- Version Control (Git), Game Logic, Asset Management</p>
+        <p class="text-xl font-bold mt-4">Core Competencies:</p>
+        <p class="text-xl ml-4">- Critical Thinking, Data-Driven Problem Solving, Quantitative Analysis</p>`,
     projects: `<h2 class="text-4xl font-bold text-[#b97235] mb-3">PROJECTS 📦</h2>`, // This will be replaced by renderProjectsModal
     letter: ` <div class="font-handwritten">
     <h2 class="text-4xl font-bold text-[#9e331f] mb-3">✉️ A Handwritten Letter from Makayla</h2>
