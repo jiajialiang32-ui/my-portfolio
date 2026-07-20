@@ -878,19 +878,52 @@ const makaylaData = [
 
 const modalData = {
     about: `<h2 class="text-4xl font-bold text-[#9e331f] mb-3">ABOUT ME 📬</h2><p class="text-xl">Dedicated BBA & Mathematics double degree student at Wilfrid Laurier University and University of Waterloo, currently in my second year. I possess a strong foundation in quantitative analysis, Python programming, and strategic business frameworks, developed through systematic study of live case studies, economics, and advanced mathematics. Currently expanding my expertise in accounting, optimization theory, and statistics, while proactively mastering additional business skills independently. I am eager to leverage my interdisciplinary background to contribute to high-impact projects in Data & Analytics, Finance, Consulting, and Product Growth.</p>`,
-    skills: `<h2 class="text-4xl font-bold text-[#3a5f25] mb-3">SKILLS TREE 🌲</h2>
-        <p class="text-xl font-bold">Web Development & Design:</p>
-        <p class="text-xl ml-4">- HTML5, CSS3 (Responsive Design, Animations), JavaScript (ES6+)</p>
-        <p class="text-xl ml-4">- Interactive Design: HTML5 Canvas, Web Audio API</p>
-        <p class="text-xl ml-4">- UI/UX: Tailwind CSS, Pixel-Art Aesthetics, Mobile-First Design</p>
-        <p class="text-xl font-bold mt-4">Data Analytics & Programming:</p>
-        <p class="text-xl ml-4">- Python (Pandas, NumPy, Matplotlib), SQL</p>
-        <p class="text-xl font-bold mt-4">Business Intelligence & Automation:</p>
-        <p class="text-xl ml-4">- Power BI, Microsoft Excel (VBA)</p>
-        <p class="text-xl font-bold mt-4">General Software Engineering:</p>
-        <p class="text-xl ml-4">- Version Control (Git), Game Logic, Asset Management</p>
-        <p class="text-xl font-bold mt-4">Core Competencies:</p>
-        <p class="text-xl ml-4">- Critical Thinking, Data-Driven Problem Solving, Quantitative Analysis</p>`,
+    skills: `<h2 class="text-4xl font-bold text-[#3a5f25] mb-6">SKILLS TREE 🌲</h2>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6 text-xl">
+    <div>
+        <h3 class="text-2xl font-bold mb-3 text-yellow-700 border-b-2 border-yellow-700 pb-1">Data Analytics & Modeling</h3>
+        <ul class="list-disc list-inside ml-2">
+            <li>Data Analytics</li>
+            <li>Data Modeling & DAX Expressions</li>
+            <li>Python (Pandas, NumPy, Matplotlib)</li>
+            <li>Python Data Simulation</li>
+            <li>SQL</li>
+        </ul>
+    </div>
+    <div>
+        <h3 class="text-2xl font-bold mb-3 text-yellow-700 border-b-2 border-yellow-700 pb-1">Business Intelligence & Visualization</h3>
+        <ul class="list-disc list-inside ml-2">
+            <li>Microsoft Power BI</li>
+            <li>Microsoft Excel</li>
+            <li>Data Visualization</li>
+        </ul>
+    </div>
+    <div>
+        <h3 class="text-2xl font-bold mb-3 text-yellow-700 border-b-2 border-yellow-700 pb-1">Statistics, Experimentation & CRO</h3>
+        <ul class="list-disc list-inside ml-2">
+            <li>A/B Testing</li>
+            <li>Statistical Inference</li>
+            <li>Conversion Rate Optimization (CRO)</li>
+        </ul>
+    </div>
+    <div>
+        <h3 class="text-2xl font-bold mb-3 text-yellow-700 border-b-2 border-yellow-700 pb-1">Frontend & Game Development</h3>
+        <ul class="list-disc list-inside ml-2">
+            <li>HTML</li>
+            <li>JavaScript</li>
+            <li>Cascading Style Sheets (CSS)</li>
+            <li>CSS Sprites</li>
+            <li>Game Development</li>
+        </ul>
+    </div>
+    <div>
+        <h3 class="text-2xl font-bold mb-3 text-yellow-700 border-b-2 border-yellow-700 pb-1">UI/UX Design</h3>
+        <ul class="list-disc list-inside ml-2">
+            <li>Figma (Software)</li>
+            <li>User Interface Design</li>
+        </ul>
+    </div>
+</div>`,
     projects: `<h2 class="text-4xl font-bold text-[#b97235] mb-3">PROJECTS 📦</h2>`, // This will be replaced by renderProjectsModal
     letter: ` <div class="font-handwritten">
     <h2 class="text-4xl font-bold text-[#9e331f] mb-3">✉️ A Handwritten Letter from Makayla</h2>
