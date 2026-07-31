@@ -744,6 +744,14 @@ const projectData = [
         githubUrl: 'https://github.com/jiajialiang32-ui/ABtesting'
     },
     {
+        id: 'seoul-bike-demand-forecasting',
+        title: 'Seoul Bike Demand Forecasting',
+        description: 'This project predicts daily Seoul bike-sharing demand and identifies the key factors driving demand variation using ARIMA/ARIMAX time-series forecasting and Random Forest feature-importance analysis.',
+        skills: ['ARIMA / ARIMAX Forecasting', 'Python Data Analysis', 'Random Forest Regression', 'Demand Driver Interpretation'],
+        highlights: 'The project leverages time-series modeling and machine learning to quantify demand drivers for urban mobility planning.',
+        githubUrl: 'https://github.com/jiajialiang32-ui/seoul-bike-demand-forecasting'
+    },
+    {
         id: 'portfolio-site',
         title: 'Interactive Portfolio Website',
         description: 'This portfolio website turns my background and projects into an interactive experience inspired by a cozy pixel-style farm world.',
@@ -887,6 +895,9 @@ const modalData = {
             <li>Data Modeling & DAX Expressions</li>
             <li>Python (Pandas, NumPy, Matplotlib)</li>
             <li>Python Data Simulation</li>
+            <li>Time Series Forecasting (ARIMA / ARIMAX)</li>
+            <li>Random Forest Regression</li>
+            <li>Feature Importance Analysis</li>
             <li>SQL</li>
         </ul>
     </div>
