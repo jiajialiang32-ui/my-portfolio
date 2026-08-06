@@ -728,14 +728,6 @@ gameLoop();
 // ==========================================
 const projectData = [
     {
-        id: 'roi-analysis',
-        title: 'North American Social Media Marketing ROI Optimization & Predictive Simulation',
-        description: 'This project analyzes a synthetic marketing dataset for a Canadian FMCG brand and evaluates how budget shifts could improve ROI for the 18–25 female audience. It combines Python-based simulation, SQL-style aggregation, and a Power BI dashboard into a compact portfolio project.',
-        skills: ['Python: pandas, numpy, matplotlib, pandasql', 'Notebook: Jupyter / ipykernel', 'Visualization: Power BI',"SQL","Data Analysis"],
-        highlights: 'The project explores how smarter budget allocation and audience targeting can improve campaign efficiency and expected returns.',
-        githubUrl: 'https://github.com/jiajialiang32-ui/roi-project'
-    },
-    {
         id: 'subscription-testing',
         title: 'FinTech Subscription Optimization via A/B Testing',
         description: 'This project evaluates the behavioral and financial impact of an optimized pricing page interface for a FinTech platform. Using a reproducible data pipeline, the analysis simulates user behavior, validates assumptions, performs statistical testing, and translates results into a revenue projection.',
@@ -750,6 +742,14 @@ const projectData = [
         skills: ['ARIMA / ARIMAX Forecasting', 'Python Data Analysis', 'Random Forest Regression', 'Demand Driver Interpretation'],
         highlights: 'The project leverages time-series modeling and machine learning to quantify demand drivers for urban mobility planning.',
         githubUrl: 'https://github.com/jiajialiang32-ui/seoul-bike-demand-forecasting'
+    },
+    {
+        id: 'e-commerce-marketing-funnel-analytics',
+        title: 'E-Commerce Marketing Funnel Analytics',
+        description: 'This project analyzes an e-commerce marketing funnel dataset containing over 120,000 customer interaction records. The objective is to evaluate overall business performance, identify key conversion bottlenecks, compare marketing channel effectiveness, and generate actionable recommendations for improving marketing ROI and customer conversion.',
+        skills: ['Python Data Analysis', 'SQL', 'Power BI', 'Business Insight Communication'],
+        highlights: 'The project focuses on funnel diagnostics, channel comparison, and strategic recommendations to improve conversion efficiency.',
+        githubUrl: 'https://github.com/jiajialiang32-ui/E-Commerce-Marketing-Funnel-Analytics'
     },
     {
         id: 'portfolio-site',
